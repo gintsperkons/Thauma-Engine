@@ -1,6 +1,14 @@
+#Vscode Elements
+#----------------
 .vscode
 
 !.vscode/c_cpp_properties.json
 !.vscode/extensions.json
 !.vscode/settings.json
 !.vscode/tasks.json
+#----------------
+
+#Compiled Elements
+#----------------
+
+#----------------
