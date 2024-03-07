@@ -1,1 +1,1 @@
-# Thauma-Engine
+# ThaumaEngine
