@@ -10,5 +10,10 @@
 
 #Compiled Elements
 #----------------
-
+*.o
+*.exe
+*.dll
+*.lib
+bin/
+lib/
 #----------------
