@@ -6,11 +6,9 @@
 @REM The script will search the directory and all subdirectories for files with the specified extension
 pushd %~dp0
 for /D %%d in (%~1\*) do (
-    echo Searching Files in "%%d"
     call SearchFilesByExtension.bat %%d %~2
 )
 for %%f in (%~1\*%~2) do (
-    echo AddingFile: "%%f"
     set "result=!result! %%f"
 )
 popd

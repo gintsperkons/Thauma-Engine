@@ -23,19 +23,21 @@ for %%X in (../%~2) do (
     set filetimeObjectFile=%%~tX
 )
 
-Set /A SourceDay=%filetimeSourceCode:~0,2%
-Set /A SourceMonth=%filetimeSourceCode:~3,2%
-Set /A SourceYear=%filetimeSourceCode:~6,4%
-Set /A SourceHour=%filetimeSourceCode:~11,2%
-Set /A SourceMinute=%filetimeSourceCode:~14,2%
-Set /A ObjectDay=%filetimeObjectFile:~0,2%
-Set /A ObjectMonth=%filetimeObjectFile:~3,2%
-Set /A ObjectYear=%filetimeObjectFile:~6,4%
-Set /A ObjectHour=%filetimeObjectFile:~11,2%
-Set /A ObjectMinute=%filetimeObjectFile:~14,2%
+Set /A SourceDay=1%filetimeSourceCode:~0,2%-100
+Set /A SourceMonth=1%filetimeSourceCode:~3,2%-100
+Set /A SourceYear=1%filetimeSourceCode:~6,4%-10000
+Set /A SourceHour=1%filetimeSourceCode:~11,2%-100
+Set /A SourceMinute=1%filetimeSourceCode:~14,2%-100
+Set /A ObjectDay=1%filetimeObjectFile:~0,2%-100
+Set /A ObjectMonth=1%filetimeObjectFile:~3,2%-100
+Set /A ObjectYear=1%filetimeObjectFile:~6,4%-10000
+Set /A ObjectHour=1%filetimeObjectFile:~11,2%-100
+Set /A ObjectMinute=1%filetimeObjectFile:~14,2%-100
+
 
 SET /A timeStampSourceCode=!SourceYear!*525600+!SourceMonth!*43800+!SourceDay!*1440+!SourceHour!*60+!SourceMinute!
 SET /A timeStampObjectFile=!ObjectYear!*525600+!ObjectMonth!*43800+!ObjectDay!*1440+!ObjectHour!*60+!ObjectMinute!
+
 
 
 if !timeStampSourceCode! GTR !timeStampObjectFile! (
