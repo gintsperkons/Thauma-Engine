@@ -1,10 +1,7 @@
 #include "test.h"
 #include <iostream>
 
-void myPrint(char* str)
+void myPrint(const char* str)
 {
-    std::cout << "Hello from myPrint!" << str << std::endl;
-
-    
     std::cout << "Hello from myPrint!" << str << std::endl;
 }

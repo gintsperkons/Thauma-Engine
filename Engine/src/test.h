@@ -2,4 +2,4 @@
 
 #include "define.h"
 
-TAPI void myPrint(char* str);
+void myPrint(const char* str);
