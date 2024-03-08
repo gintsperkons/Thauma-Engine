@@ -2,6 +2,6 @@
 
 int main()
 {
-    myPrint("Hello from main!");
+    TFATAL("This is a fatal error");
     return 0;
 }

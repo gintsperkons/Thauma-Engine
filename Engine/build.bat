@@ -54,7 +54,7 @@ goto :eof
         if !result! EQU 1 (
             echo Compiling File "%%f"
             echo !cd!
-            !compiler! -c %compilerDebugFlags% -o ..\!outFilePath! !inFilePath!
+            !compiler! -c %compilerDebugFlags% %includeFlags%  -o ..\!outFilePath! !inFilePath!
         )
     )   
     SET result=
@@ -86,7 +86,7 @@ goto :eof
         if !result! EQU 1 (
             echo Compiling File "%%f"
             echo !cd!
-            !compiler! -c %compilerReleaseFlags% -o ..\!outFilePath! !inFilePath!
+            !compiler! -c %compilerReleaseFlags%  %includeFlags% -o ..\!outFilePath! !inFilePath!
         )
     )   
     SET result=

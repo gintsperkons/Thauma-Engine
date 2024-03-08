@@ -9,14 +9,14 @@ SET ProgramName=%2
 SET CompilePath=%3\%buildType%\testbed
 SET LibPath=%4
 
-SET compilerDebugFlags=-g -std=c++17 -Wall -Werror
+SET compilerDebugFlags=-g -v -std=c++17 -Wall -Werror
 SET includeFlags=-Isrc -I..\Engine\src\
 SET linkerFlags=-L..\lib\ -l%ProgramName%
-SET definesDebug=-DDEBUG -DTIMPORT
+SET definesDebug=-DTDEBUG -DTIMPORT
 
 
 SET compilerReleaseFlags=-std=c++17 -Wall -Werror
-SET definesRelease=-DTIMPORT
+SET definesRelease=-DTRELEASE -DTIMPORT
 
 SET compiler=clang++
 if "%buildType%"=="debug" (
