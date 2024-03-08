@@ -1,4 +1,5 @@
 #include "Logger.h"
+#include "asserts.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -13,7 +14,12 @@ b8 Init()
 return 0;
 }
 
-TAPI void Log(LogLevel level, const char *message, ...)
+void ReportAssertionFailure(const char* expression, const char* file, i32 line, const char* message = nullptr){
+    Log(LOG_LEVEL_FATAL, "Assertion Failure: %s\nFile: %s\nLine: %d\nMessage: %s", expression, file, line, message);
+}
+
+
+void Log(LogLevel level, const char *message, ...)
 {
     const char* levelString[6] = {"[FATAL]:", "[ERROR]:", "[WARN]:", "[INFO]:", "[DEBUG]:", "[TRACE]:"};
     
@@ -26,7 +32,8 @@ TAPI void Log(LogLevel level, const char *message, ...)
     vsnprintf(outMessage, 32000, message, arg_ptr);
     va_end(arg_ptr);
 
-    sprintf(outMessage, "%s %s\n", levelString[level], outMessage);
+    char completeOutMessage[32000];
+    sprintf(completeOutMessage, "%s %s\n", levelString[level], outMessage);
     printf("%s", outMessage);
 }
 
