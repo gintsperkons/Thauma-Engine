@@ -1,0 +1,29 @@
+
+
+#--------------------
+# Built Files
+*.o
+*.d
+Makefile
+#--------------------
+
+#--------------------
+# Executables
+*.exe
+*.out
+#--------------------
+
+#--------------------
+# Visual Studio
+.vs
+*.sln
+*.vcxproj
+*.pdb
+*.idb
+*.ilk
+*.log
+*.obj
+*.tlog
+*.user
+*.recipe
+*.lastbuildstate
