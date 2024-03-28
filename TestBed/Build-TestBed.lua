@@ -1,31 +1,38 @@
-project "ThaumaEngine"
-    kind "SharedLib"
+project "TestBed"
+    kind "ConsoleApp"
     language "C++"
+    cppdialect "C++20"
     targetdir "Binaries/%{cfg.buildcfg}"
+    staticruntime "off"
 
 
     files {"Source/**.h", "Source/**.cpp"}
 
     includedirs
     {
-        "Source"
+        "Source",
+
+        "../Engine/Source"
 
     }
+
+    links
+    {
+        "ThaumaEngine"
+    }
+    
+   
 
     targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
     objdir ("../Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")
     
-    postbuildcommands
-    {   
-        "{mkdir} ../Binaries/" .. OutputDir .. "/TestBed/",
-        "{mkdir} ../Binaries/" .. OutputDir .. "/Editor/",
-        "{COPY} ../Binaries/" .. OutputDir .. "/ThaumaEngine/ThaumaEngine.dll ../Binaries/" .. OutputDir .. "/TestBed/",
-        "{COPY} ../Binaries/" .. OutputDir .. "/ThaumaEngine/ThaumaEngine.dll ../Binaries/" .. OutputDir .. "/Editor/"
-    }
+
 
     filter "system:windows"
         systemversion "latest"
         defines {"WINDOWS"}
+    
+        
 
     filter "configurations:Debug"
         defines {"DEBUG"}
@@ -43,7 +50,3 @@ project "ThaumaEngine"
         runtime "Release"
         optimize "On"
         symbols "Off"
-
-    
-    
-

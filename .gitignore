@@ -11,6 +11,9 @@ Makefile
 # Executables
 *.exe
 *.out
+*.dll
+*.lib
+*.exp
 #--------------------
 
 #--------------------
@@ -27,4 +30,5 @@ Makefile
 *.user
 *.recipe
 *.lastbuildstate
+*.filters
 #--------------------
