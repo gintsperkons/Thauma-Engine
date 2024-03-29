@@ -12,7 +12,7 @@ project "TestBed"
     {
         "Source",
 
-        "../Engine/Source"
+        "../ThaumaEngine/Source"
 
     }
 
