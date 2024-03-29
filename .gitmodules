@@ -1,0 +1,3 @@
+[submodule "ThaumaEngine/Vendor/GLFW"]
+	path = ThaumaEngine/Vendor/GLFW
+	url = git@github.com:gintsperkons/glfw.git

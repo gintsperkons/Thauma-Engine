@@ -9,18 +9,16 @@ project "ThaumaEngine"
     includedirs
     {
         "Source"
-
     }
 
-    targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
-    objdir ("../Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")
+    targetdir ("%{wks.location}/Binaries/" .. OutputDir .. "/%{prj.name}")
+    objdir ("%{wks.location}/Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")
     
     postbuildcommands
     {   
-        "{mkdir} ../Binaries/" .. OutputDir .. "/TestBed/",
-        "{mkdir} ../Binaries/" .. OutputDir .. "/Editor/",
-        "{COPY} ../Binaries/" .. OutputDir .. "/ThaumaEngine/ThaumaEngine.dll ../Binaries/" .. OutputDir .. "/TestBed/",
-        "{COPY} ../Binaries/" .. OutputDir .. "/ThaumaEngine/ThaumaEngine.dll ../Binaries/" .. OutputDir .. "/Editor/"
+        "{mkdir} %{wks.location}/Binaries/" .. OutputDir .. "/TestBed/",
+        "{ECHO} %{cfg.longname}",
+        "{COPYFILE} %{cfg.buildtarget.relpath} %{wks.location}/Binaries/" .. OutputDir .. "/TestBed/"
     }
 
     filter "system:windows"

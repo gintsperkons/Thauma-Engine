@@ -1,3 +1,5 @@
+include "Dependencies.lua"
+
 workspace "ThaumaEngine"
     architecture "x64"
     configurations {"Debug", "Release", "Dist"}
@@ -5,6 +7,11 @@ workspace "ThaumaEngine"
    
 
 OutputDir = "%{cfg.system}-%{cfg.architecture}-%{cfg.buildcfg}"
+
+group "Dependencies"
+    include "ThaumaEngine/Vendor/GLFW"
+group ""
+
 
 group "Core"
     include "ThaumaEngine/Build-Engine.lua"
