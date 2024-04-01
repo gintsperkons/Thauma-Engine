@@ -9,7 +9,8 @@ workspace "ThaumaEngine"
 OutputDir = "%{cfg.system}-%{cfg.architecture}-%{cfg.buildcfg}"
 
 group "Dependencies"
-    include "ThaumaEngine/Vendor/GLFW"
+    include "Vendor/Libraries/GLFW"
+    include "Vendor/Libraries/GLAD"
 group ""
 
 

@@ -8,7 +8,15 @@ project "ThaumaEngine"
 
     includedirs
     {
-        "Source"
+        "Source",
+        "%{IncludeDir.GLFW}",
+        "%{IncludeDir.GLAD}"
+    }
+
+    links 
+    {
+        "GLFW",
+        "GLAD"
     }
 
     targetdir ("%{wks.location}/Binaries/" .. OutputDir .. "/%{prj.name}")
