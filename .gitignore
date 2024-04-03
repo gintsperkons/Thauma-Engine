@@ -20,7 +20,7 @@ Makefile
 # Visual Studio
 .vs
 *.sln
-*.vcxproj
+*.vcxproj*
 *.pdb
 *.idb
 *.ilk
