@@ -11,5 +11,9 @@ class Window
 public:
 	Window(std::string title, int width, int height);
 	~Window();
+
+	b8 ShouldClose();
+	void PollEvents();
+	void ProcessInput();
 };
 

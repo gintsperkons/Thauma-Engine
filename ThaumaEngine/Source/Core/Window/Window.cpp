@@ -19,6 +19,21 @@ Window::Window(std::string title, int width, int height)
 Window::~Window()
 {
 	glfwDestroyWindow(window);
-	glfwTerminate();
 	printf("Window Destroyed\n");
+}
+
+b8 Window::ShouldClose()
+{
+	return glfwWindowShouldClose(window);
+}
+
+void Window::PollEvents()
+{
+	glfwPollEvents();
+}
+
+void Window::ProcessInput()
+{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
 }
