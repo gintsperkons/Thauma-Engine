@@ -10,7 +10,8 @@ project "ThaumaEngine"
     {
         "Source",
         "%{IncludeDir.GLFW}",
-        "%{IncludeDir.GLAD}"
+        "%{IncludeDir.GLAD}",
+		"%{IncludeDir.VulkanSDK}"
     }
 
     links 
@@ -22,6 +23,8 @@ project "ThaumaEngine"
     targetdir ("%{wks.location}/Binaries/" .. OutputDir .. "/%{prj.name}")
     objdir ("%{wks.location}/Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")
     
+
+
     postbuildcommands
     {   
         "{mkdir} %{wks.location}/Binaries/" .. OutputDir .. "/TestBed/",
