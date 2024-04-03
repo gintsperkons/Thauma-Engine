@@ -1,4 +1,8 @@
+
+#include "Window.h"
+
 #include "WindowManager.h"
+
 
 WindowManager *instance = nullptr;
 
@@ -9,20 +13,31 @@ WindowManager* WindowManager::GetInstance()
 	return instance;
 }
 
+void WindowManager::DestroyInstance()
+{
+	if (instance != nullptr)
+	{
+		delete instance;
+		instance = nullptr;
+	}
+}
+
 WindowManager::WindowManager()
-{}
+{
+}
 
 WindowManager::~WindowManager()
 {
-	delete instance;
-	instance = nullptr;
+	for (auto window : windowMap)
+	{
+		delete window.second;
+	}
 }
 
-b8 WindowManager::Init()
+Window* WindowManager::CreateWindow(std::string idName, std::string windowTitle, int width, int height)
 {
-	if (true)
-	{
-				return true;
-	}
-	return false;
+	Window* window = new Window(windowTitle, width, height);
+	
+	windowMap[idName] = window;
+	return window;
 }
