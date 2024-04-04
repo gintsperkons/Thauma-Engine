@@ -1,20 +1,19 @@
 #pragma once
-#include <GLFW/glfw3.h>
+#include "define.h"
+#include "GLFW/glfw3.h"
+#include "BaseRenderer/BaseRenderer.h"
 
+class Renderer {
+	BaseRenderer* currentRenderer;
+	i8 currentRendererID = 0;
 
-class Renderer
-{
+	void Destroy();
 public:
-	virtual int Init(GLFWwindow* window) = 0;
-	virtual void Draw() = 0;
-	virtual void Update() = 0;
-	virtual void Destroy() = 0;
+	void Init(int renderType, GLFWwindow* window);
+	~Renderer();
 
 
-	Renderer() {};
-	~Renderer() {};
-
-	enum RenderType
+	enum Type
 	{
 		None,
 		Vulkan,

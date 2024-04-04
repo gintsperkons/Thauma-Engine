@@ -1,29 +1,10 @@
-#include "Core/Rendering/Vulkan/VulkanRenderer.h"
+
+#include "Core/Rendering/Renderer.h"
 #include "Window.h"
 
-void Window::InitializeRenderer(int RenderType)
-{
-	switch (RenderType)
-	{
-	case  Renderer::RenderType::Vulkan:
-		if (currentRendererID != Renderer::RenderType::None)
-			DestroyCurrentRenderer();
-		currentRenderer = new VulkanRenderer();
-		currentRenderer->Init(window);
-		currentRendererID = RenderType;
-		break;
-	case  Renderer::RenderType::OpenGL:
-		break;
-	default:
-		break;
-	}
-}
 
-void Window::DestroyCurrentRenderer()
-{
-	currentRenderer->Destroy();
-	currentRendererID = 0;
-}
+
+
 
 Window::Window(std::string title, int width, int height)
 	: width(width), height(height)
@@ -39,12 +20,14 @@ Window::Window(std::string title, int width, int height)
 			fprintf(stderr,"Error: %s\n", description);
 	});
 	window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
-	InitializeRenderer(Renderer::RenderType::Vulkan);
+	glfwSetWindowUserPointer(window, this);
+	currentRenderer = new Renderer();
+	currentRenderer->Init(Renderer::Type::Vulkan,window);
 }
 
 Window::~Window()
 {
-	DestroyCurrentRenderer();
+	delete currentRenderer;
 	glfwDestroyWindow(window);
 	printf("Window Destroyed\n");
 }

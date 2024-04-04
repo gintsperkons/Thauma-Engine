@@ -4,11 +4,12 @@
 
 #include "Core/Rendering/BaseRenderer/BaseRenderer.h"
 
-class VulkanRenderer : public BaseRenderer
+class OpenGLRenderer : public BaseRenderer
+
 {
-	~VulkanRenderer();
+	~OpenGLRenderer();
 public:
-	VulkanRenderer();
+	OpenGLRenderer();
 	int Init(GLFWwindow* window);
 	void Draw();
 	void Update();
