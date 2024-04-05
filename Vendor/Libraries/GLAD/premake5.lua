@@ -2,6 +2,7 @@ project "GLAD"
     kind "StaticLib"
     language "C"
     staticruntime "off"
+    cppdialect "C++20"
 
     targetdir ("%{wks.location}/Binaries/" .. OutputDir .. "/%{prj.name}")
     objdir ("%{wks.location}/Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")
