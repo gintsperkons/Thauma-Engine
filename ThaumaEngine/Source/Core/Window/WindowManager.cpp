@@ -35,7 +35,7 @@ WindowManager::WindowManager()
 
 WindowManager::~WindowManager()
 {
-	for (auto window : windowMap)
+	for (std::pair<std::string, Window *> window : windowMap)
 	{
 		delete window.second;
 	}
@@ -61,7 +61,7 @@ b8 WindowManager::ShouldStop()
 		b8 shouldClose = true;
 		std::vector<std::string> windowsToClose;
 		
-		for (auto window : windowMap)
+		for (std::pair<std::string,Window*> window : windowMap)
 		{
 			if (window.second->ShouldClose())
 			{
@@ -84,7 +84,7 @@ b8 WindowManager::ShouldStop()
 
 void WindowManager::ProcessInput()
 {
-	for (auto window : windowMap)
+	for (std::pair<std::string, Window *> window : windowMap)
 	{
 		window.second->ProcessInput();
 	}
@@ -92,7 +92,7 @@ void WindowManager::ProcessInput()
 
 void WindowManager::PollEvents()
 {
-	for (auto window : windowMap)
+	for (std::pair<std::string, Window *> window : windowMap)
 	{
 		window.second->PollEvents();
 	}
