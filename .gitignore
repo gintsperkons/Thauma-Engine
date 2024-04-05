@@ -21,10 +21,12 @@ Makefile
 .vs
 *.sln
 *.vcxproj*
+*.vcxproj
 *.pdb
 *.idb
 *.ilk
 *.log
+*.obj*
 *.obj
 *.tlog
 *.user
