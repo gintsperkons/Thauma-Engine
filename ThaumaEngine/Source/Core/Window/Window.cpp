@@ -20,7 +20,6 @@ Window::Window(std::string title, int width, int height)
 	: width(width), height(height)
 {
 	int RenderType = Renderer::Type::Vulkan;
-	printf("Window Created: %s\n", title.c_str());
 	glfwSetErrorCallback([](int error, const char *description)
 	{
 			fprintf(stderr,"Error: %s\n", description);
@@ -45,7 +44,6 @@ Window::~Window()
 {
 	delete currentRenderer;
 	glfwDestroyWindow(window);
-	printf("Window Destroyed\n");
 }
 
 b8 Window::ShouldClose()
