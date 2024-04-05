@@ -17,7 +17,8 @@ project "ThaumaEngine"
     links 
     {
         "GLFW",
-        "GLAD"
+        "GLAD",
+        "%{Library.Vulkan}"
     }
 
     targetdir ("%{wks.location}/Binaries/" .. OutputDir .. "/%{prj.name}")
