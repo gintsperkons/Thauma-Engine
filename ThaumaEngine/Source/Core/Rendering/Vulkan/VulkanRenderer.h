@@ -2,6 +2,7 @@
 
 #include "define.h"
 #include <vector>
+#include <optional>
 #include <GLFW/glfw3.h>
 #include <vulkan/vulkan.h>
 
@@ -9,6 +10,23 @@
 
 class VulkanRenderer : public BaseRenderer
 {
+	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+	VkDevice device = VK_NULL_HANDLE;
+
+	VkQueue graphicsQueue;
+
+	struct QueueFamilyIndices
+	{
+		std::optional<uint32_t> graphicsFamily;
+
+		bool isComplete()
+		{
+			return graphicsFamily.has_value();
+		}
+	};
+
+
+
 	const std::vector<const char*> validationLayers = {
 	"VK_LAYER_KHRONOS_validation"
 	};
@@ -21,13 +39,32 @@ class VulkanRenderer : public BaseRenderer
 
 private:
 	VkInstance vInstance;
-	//Creation Funcions
+	VkDebugUtilsMessengerEXT debugMessenger;
+	//CreationSelection Funcions
 	void CreateInstance();
+	void SetupDebugMessanger();
+	void SelectPhysicalDevice();
+	QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
+	void CreateLogicalDevice();
 	//Getter Functions
 	std::vector<const char*>GetInstanceExtensions();
 	//Checker Functions
 	b8 CheckInstanceExtensionSupport(std::vector<const char*>);
 	b8 CheckValidationLayerSupport();
+	u32 RateDeviceSuitability(VkPhysicalDevice device);
+	//SupportCreationAndDestruction Functions
+	VkResult CreateDebugUtilsMessangerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
+										  const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessanger);
+	void DestroyDebugUtilsMessangerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger,
+										   											const VkAllocationCallbacks* pAllocator);
+
+	//Support Functions
+	void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
+	static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(
+		VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+		VkDebugUtilsMessageTypeFlagsEXT messageType,
+		const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+		void* pUserData);
 
 	~VulkanRenderer();
 public:
