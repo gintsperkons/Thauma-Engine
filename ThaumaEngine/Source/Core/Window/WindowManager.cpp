@@ -26,6 +26,11 @@ void WindowManager::DestroyInstance()
 
 WindowManager::WindowManager()
 {
+	if (!glfwInit())
+	{
+		printf("GLFW Init Failed\n");
+		glfwTerminate();
+	}
 }
 
 WindowManager::~WindowManager()
