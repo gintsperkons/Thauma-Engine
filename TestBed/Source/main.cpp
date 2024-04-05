@@ -7,7 +7,6 @@ int main()
     WindowManager *windowManager = WindowManager::GetInstance();
     //create a window
     windowManager->CreateWindow("mainWindow", "Test Window",1080,720);
-    windowManager->CreateWindow("testWindow", "Test Window2", 1080, 720);
     //main loop
     while (!windowManager->ShouldStop())
     {

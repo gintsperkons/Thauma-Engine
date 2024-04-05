@@ -6,23 +6,39 @@
 
 
 
+void Window::SetupForVulkan()
+{
+	glfwWindowHint(GLFW_CLIENT_API,GLFW_NO_API);
+	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+}
+
+void Window::SetupForOpenGL()
+{
+}
+
 Window::Window(std::string title, int width, int height)
 	: width(width), height(height)
 {
+	int RenderType = Renderer::Type::Vulkan;
 	printf("Window Created: %s\n", title.c_str());
-	if (!glfwInit())
-	{
-		printf("GLFW Init Failed\n");
-		glfwTerminate();
-	}
 	glfwSetErrorCallback([](int error, const char *description)
 	{
 			fprintf(stderr,"Error: %s\n", description);
 	});
+	switch (RenderType)
+	{
+	case Renderer::Type::Vulkan:
+		SetupForVulkan();
+	case Renderer::Type::OpenGL:
+		SetupForOpenGL();
+	default:
+		break;
+	}
+
 	window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
 	glfwSetWindowUserPointer(window, this);
 	currentRenderer = new Renderer();
-	currentRenderer->Init(Renderer::Type::Vulkan,window);
+	currentRenderer->Init(RenderType,window);
 }
 
 Window::~Window()

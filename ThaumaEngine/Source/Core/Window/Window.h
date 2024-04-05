@@ -10,6 +10,9 @@ class Window
 	GLFWwindow *window;
 	int width = 800;
 	int height = 600;
+
+	void SetupForVulkan();
+	void SetupForOpenGL();
 	
 public:
 	Window(std::string title, int width, int height);
