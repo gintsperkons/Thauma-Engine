@@ -6,6 +6,10 @@
 
 void VulkanRenderer::CreateInstance()
 {
+	if (enableValidationLayers && !CheckValidationLayerSupport()) {
+		throw std::runtime_error("validation layers requested, but not available!");
+	}
+
 	VkApplicationInfo appInfo{};
 	appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 	appInfo.pApplicationName = "TestsAppLication";
@@ -22,7 +26,16 @@ void VulkanRenderer::CreateInstance()
 	createInfo.pApplicationInfo = &appInfo;
 	createInfo.ppEnabledExtensionNames = instanceExtensions.data();
 	createInfo.enabledExtensionCount = static_cast<uint32_t>(instanceExtensions.size());
-	createInfo.enabledLayerCount = 0;
+
+	if (enableValidationLayers)
+	{
+		createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+		createInfo.ppEnabledLayerNames = validationLayers.data();
+	}
+	else {
+		createInfo.enabledLayerCount = 0;
+	}
+
 
 
 	if (vkCreateInstance(&createInfo, nullptr, &vInstance))
@@ -40,6 +53,11 @@ std::vector<const char*> VulkanRenderer::GetInstanceExtensions()
 	for (size_t i = 0; i < glfwExtensionCount; i++)
 	{
 		instanceExtensions.push_back(glfwExtensions[i]);
+	}
+
+	if (enableValidationLayers)
+	{
+		//TODO
 	}
 
 
@@ -67,7 +85,7 @@ b8 VulkanRenderer::CheckInstanceExtensionSupport(std::vector<const char*> checkE
 
 	for (const auto& checkExtension : checkExtensions)
 	{
-		bool hasExtension = false;
+		b8 hasExtension = false;
 		for (const auto& extension : extensions)
 		{
 			if (strcmp(checkExtension, extension.extensionName))
@@ -85,6 +103,44 @@ b8 VulkanRenderer::CheckInstanceExtensionSupport(std::vector<const char*> checkE
 	}
 	return true;
 	
+}
+
+b8 VulkanRenderer::CheckValidationLayerSupport()
+{
+	uint32_t layerCount;
+	vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+
+	std::vector<VkLayerProperties> layers = std::vector<VkLayerProperties>(layerCount);
+	vkEnumerateInstanceLayerProperties(&layerCount, layers.data());
+
+	for (const char* layerName : validationLayers)
+	{
+		b8 layerFound = false;
+
+		for (const auto& layerProperties : layers) {
+			if (strcmp(layerName, layerProperties.layerName) == 0) {
+				layerFound = true;
+				break;
+			}
+		}
+
+		if (!layerFound)
+		{
+
+			printf("Not found layer: %s\n", layerName);
+			return false;
+		}
+	}
+
+
+
+
+	std::cout << "available layers:\n";
+
+	for (const auto& layer : layers) {
+		std::cout << '\t' << layer.layerName << '\n';
+	}
+	return true;
 }
 
 VulkanRenderer::~VulkanRenderer()

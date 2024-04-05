@@ -9,6 +9,16 @@
 
 class VulkanRenderer : public BaseRenderer
 {
+	const std::vector<const char*> validationLayers = {
+	"VK_LAYER_KHRONOS_validation"
+	};
+
+	#ifdef DEBUG
+		const bool enableValidationLayers = true;
+	#else
+		const bool enableValidationLayers = false;
+	#endif
+
 private:
 	VkInstance vInstance;
 	//Creation Funcions
@@ -17,6 +27,7 @@ private:
 	std::vector<const char*>GetInstanceExtensions();
 	//Checker Functions
 	b8 CheckInstanceExtensionSupport(std::vector<const char*>);
+	b8 CheckValidationLayerSupport();
 
 	~VulkanRenderer();
 public:
