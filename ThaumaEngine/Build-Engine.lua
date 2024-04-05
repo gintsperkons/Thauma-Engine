@@ -2,6 +2,7 @@ project "ThaumaEngine"
     kind "SharedLib"
     language "C++"
     targetdir "Binaries/%{cfg.buildcfg}"
+    cppdialect "C++20"
 
 
     files {"Source/**.h", "Source/**.cpp"}
