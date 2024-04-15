@@ -1,0 +1,7 @@
+#Custom
+Binaries/*
+
+#VS2022
+.vs/*
+*.vcxproj*
+*.sln

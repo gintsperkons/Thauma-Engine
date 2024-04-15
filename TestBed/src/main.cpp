@@ -1,0 +1,7 @@
+#include <test.h>
+
+int main(int argc, char *argv[])
+{
+	printTestHi();
+	return 0;
+}
