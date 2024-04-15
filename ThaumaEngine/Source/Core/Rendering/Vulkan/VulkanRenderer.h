@@ -3,15 +3,19 @@
 #include "define.h"
 #include <vector>
 #include <optional>
+#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
+#include <GLFW/glfw3native.h>
 #include <vulkan/vulkan.h>
 
 #include "Core/Rendering/BaseRenderer/BaseRenderer.h"
 
 class VulkanRenderer : public BaseRenderer
 {
+	GLFWwindow* glfwWindow;
 	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 	VkDevice device = VK_NULL_HANDLE;
+	VkSurfaceKHR surface;
 
 	VkQueue graphicsQueue;
 
@@ -46,6 +50,7 @@ private:
 	void SelectPhysicalDevice();
 	QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
 	void CreateLogicalDevice();
+	void CreateSurface();
 	//Getter Functions
 	std::vector<const char*>GetInstanceExtensions();
 	//Checker Functions

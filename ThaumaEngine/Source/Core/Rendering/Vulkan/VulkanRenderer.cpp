@@ -162,6 +162,14 @@ void VulkanRenderer::CreateLogicalDevice()
 	vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
 }
 
+void VulkanRenderer::CreateSurface()
+{
+	if (glfwCreateWindowSurface(vInstance, glfwWindow,nullptr,&surface) != VK_SUCCESS)
+	{
+		throw std::runtime_error("Failed to create windows surface!");
+	}
+}
+
 std::vector<const char*> VulkanRenderer::GetInstanceExtensions()
 {
 	uint32_t glfwExtensionCount = 0;
@@ -324,6 +332,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL VulkanRenderer::DebugCallback(VkDebugUtilsMessage
 
 VulkanRenderer::~VulkanRenderer()
 {
+	vkDestroySurfaceKHR(vInstance, surface, nullptr);
 	vkDestroyDevice(device, nullptr);
 	if (enableValidationLayers)
 		DestroyDebugUtilsMessangerEXT(vInstance,debugMessenger,nullptr);
@@ -337,10 +346,12 @@ VulkanRenderer::VulkanRenderer()
 
 int VulkanRenderer::Init(GLFWwindow* window)
 {
+	glfwWindow = window;
 	CreateInstance();
 	SetupDebugMessanger();
 	SelectPhysicalDevice();
 	CreateLogicalDevice();
+	CreateSurface();
 
 	
 	return 0;
