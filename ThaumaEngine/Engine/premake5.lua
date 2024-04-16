@@ -33,18 +33,18 @@ project "ThaumaEngineLib"
         defines {"WINDOWS"}
 
     filter "configurations:Debug"
-        defines {"DEBUG"}
+        defines {"TEXPORT","TDEBUG"}
         runtime "Debug"
         symbols "On"
 
     filter "configurations:Release"
-        defines {"RELEASE"}
+        defines {"TEXPORT","TRELEASE"}
         runtime "Release"
         optimize "On"
         symbols "On"
 
     filter "configurations:Dist"
-        defines {"DIST"}
+        defines {"TEXPORT","TDIST"}
         runtime "Release"
         optimize "On"
         symbols "Off"

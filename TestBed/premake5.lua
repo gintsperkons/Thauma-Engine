@@ -22,18 +22,18 @@ systemversion "latest"
 defines {"WINDOWS"}
 
 filter "configurations:Debug"
-defines {"DEBUG"}
+defines {"TDEBUG"}
 runtime "Debug"
 symbols "On"
 
 filter "configurations:Release"
-defines {"RELEASE"}
+defines {"TRELEASE"}
 runtime "Release"
 optimize "On"
 symbols "On"
 
 filter "configurations:Dist"
-defines {"DIST"}
+defines {"TDIST"}
 runtime "Release"
 optimize "On"
 symbols "Off"
