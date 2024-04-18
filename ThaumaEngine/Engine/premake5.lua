@@ -9,11 +9,13 @@ project "ThaumaEngineLib"
 
     includedirs
     {
-        "src"
+        "src",
+        "%{IncludeDir.GLFW}"
     }
 
     links 
     {
+        "GLFW"
     }
 
     targetdir ("%{wks.location}/Binaries/" .. OutputDir .. "/%{prj.name}")

@@ -1,5 +1,5 @@
 #pragma once
-#include "define.h"
+#include "Define.h"
 
 #define ASSERTIONS_ENABLED
 

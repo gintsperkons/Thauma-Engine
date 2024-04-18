@@ -1,0 +1,3 @@
+[submodule "Vendor/Libraries/GLFW"]
+	path = Vendor/Libraries/GLFW
+	url = git@github.com:gintsperkons/glfw.git
