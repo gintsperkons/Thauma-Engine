@@ -8,10 +8,13 @@ class Window
 	
 public:
 	TAPI Window();
-
+	
 	TAPI void Init(const char *title = "Thauma Engine Window", int width = 800, int height = 600);
 	TAPI b8 ShouldClose();
 	TAPI void Update();
-
+	TAPI GLFWwindow *GetWindow()
+	{
+		return window;
+	};
 	TAPI ~Window();
 };

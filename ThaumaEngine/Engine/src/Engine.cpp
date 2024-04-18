@@ -2,6 +2,7 @@
 #include "Core/logger.h"
 #include "Engine.h"
 #include "Core/Window/Window.h"
+#include "Core/Renderer.h"
 #include <malloc.h>
 #include <stdio.h>
 
@@ -29,6 +30,8 @@ int ThaumaEngine::Init()
 {
 	window = new Window();
 	window->Init();
+	renderer = new Renderer();
+	renderer->Init(Renderer::Type::Vulkan,window->GetWindow());
 	return 0;
 }
 
@@ -46,6 +49,7 @@ int ThaumaEngine::Run()
 
 int ThaumaEngine::Terminate()
 {
+	delete renderer;
 	delete window;
 	delete ThaumaEngine::instance;
 	return 0;

@@ -1,6 +1,6 @@
 #include "Renderer.h"
-#include "Vulkan/VulkanRenderer.h"
-#include "OpemGL/OpenGLRenderer.h"
+#include "Renderers/Vulkan/VulkanRenderer.h"
+#include "Renderers/OpenGL/OpenGLRenderer.h"
 
 void Renderer::Init(int renderType,GLFWwindow* window)
 {

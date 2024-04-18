@@ -1,7 +1,7 @@
 #pragma once
 #include "define.h"
 #include "GLFW/glfw3.h"
-#include "BaseRenderer/BaseRenderer.h"
+#include "Core/Renderers/BaseRenderer/BaseRenderer.h"
 
 class Renderer {
 	BaseRenderer* currentRenderer;
