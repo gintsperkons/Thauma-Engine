@@ -34,7 +34,13 @@ int ThaumaEngine::Init()
 
 int ThaumaEngine::Run()
 {
-	LOG_DEBUG("Total Allocated Memory: %d bytes\n", MemoryManager::GetTotalAllocated());
+	while (!window->ShouldClose())
+	{
+		window->Update();
+		LOG_DEBUG("Total Allocated Memory: %d bytes\n", MemoryManager::GetTotalAllocated());
+
+	}
+	
 	return 0;
 }
 

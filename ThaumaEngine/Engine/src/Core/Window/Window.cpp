@@ -20,6 +20,20 @@ void Window::Init(const char* title, int width, int height)
 	glfwSetWindowUserPointer(window, this);
 }
 
+TAPI b8 Window::ShouldClose()
+{
+	return glfwWindowShouldClose(window);
+}
+
+TAPI void Window::Update()
+{
+	glfwPollEvents();
+}
+
+
+
 Window::~Window()
 {
+	glfwDestroyWindow(window);
+	glfwTerminate();
 }
