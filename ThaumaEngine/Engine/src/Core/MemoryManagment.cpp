@@ -2,7 +2,6 @@
 #include "Core/Logger.h"
 
 
-
 MemoryManager::AllocationData allocationData;
 
 i64 MemoryManager::GetTotalAllocated()
@@ -10,16 +9,30 @@ i64 MemoryManager::GetTotalAllocated()
 	return (allocationData.totalAllocated);
 }
 
+
+
 void MemoryManager::AddAllocation(size_t size, MemoryManager::MemoryType memoryType)
 {
 	allocationData.totalAllocated += size;
+	allocationData.allocationTypeDataArray[static_cast<int>(memoryType)].AllocatedAmount += size;
 }
+
 
 
 
 void MemoryManager::RemoveAllocation(size_t size, MemoryManager::MemoryType memoryType)
 {
 allocationData.totalAllocated -= size;
+allocationData.allocationTypeDataArray[static_cast<int>(memoryType)].AllocatedAmount -= size;
+}
+
+void MemoryManager::LogAllocations()
+{
+	LOG_DEBUG("Total Allocated: %d\n", allocationData.totalAllocated);
+	for (auto &typeData : allocationData.allocationTypeDataArray)
+	{
+		LOG_DEBUG("Allocated for type %s: %d\n", typeData.Name, typeData.AllocatedAmount);
+	}
 }
 
 

@@ -6,19 +6,33 @@
 namespace MemoryManager
 {
 
+	
+
+	struct AllocationTypeData
+	{
+		char Name[16];
+		i64 AllocatedAmount = 0;
+	};
+
 	enum class MemoryType
 	{
-		Unknown = 0
+		Unknown = 0,
+		Rendering
 	};
 
 	struct AllocationData
 	{
+		char Name[6] = "Total";
 		i64 totalAllocated = 0;
-	};
+		AllocationTypeData allocationTypeDataArray[2] = {
+	{"Unknown", 0},
+	{"Rendering", 0}
+		};
 
+	};
 	void AddAllocation(size_t size, MemoryType memoryType);
 	void RemoveAllocation(size_t size, MemoryType memoryType);
-
+	void LogAllocations();
 
 	i64 GetTotalAllocated();
 
