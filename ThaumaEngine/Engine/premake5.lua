@@ -10,12 +10,14 @@ project "ThaumaEngineLib"
     includedirs
     {
         "src",
-        "%{IncludeDir.GLFW}"
+        "%{IncludeDir.GLFW}",
+		"%{IncludeDir.VulkanSDK}"
     }
 
     links 
     {
-        "GLFW"
+        "GLFW",
+        "%{Library.Vulkan}"
     }
 
     targetdir ("%{wks.location}/Binaries/" .. OutputDir .. "/%{prj.name}")
