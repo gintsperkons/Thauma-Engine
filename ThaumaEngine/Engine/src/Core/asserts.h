@@ -13,7 +13,7 @@
 
 TAPI void reportAssertionFailure(const char* expression, const char* file, int line, const char* message = nullptr);
 
-#define TASSERT(expr) \
+#define THAUMA_ASSERT(expr) \
 { \
 	if (expr) {} \
 	else \
@@ -23,7 +23,7 @@ TAPI void reportAssertionFailure(const char* expression, const char* file, int l
 	} \
 }
 
-#define TASSERT_MSG(expr, msg) \
+#define THAUMA_ASSERT_MSG(expr, msg) \
 { \
 	if (expr) {} \
 	else \
@@ -33,7 +33,7 @@ TAPI void reportAssertionFailure(const char* expression, const char* file, int l
 	} \
 }
 #ifdef TDEBUG
-#define TASSERT_DEBUG(expr)  \
+#define THAUMA_ASSERT_DEBUG(expr)  \
 { \
 	if (expr) {} \
 	else \
@@ -43,13 +43,13 @@ TAPI void reportAssertionFailure(const char* expression, const char* file, int l
 	} \
 }
 #else
-#define TASSERT_DEBUG(expr)
+#define THAUMA_ASSERT_DEBUG(expr)
 #endif // TDEBUG
 
 #else 
-#define TASSERT(expr)
-#define TASSERT_MSG(expr, msg)
-#define TASSERT_DEBUG(expr)
+#define THAUMA_ASSERT(expr)
+#define THAUMA_ASSERT_MSG(expr, msg)
+#define THAUMA_ASSERT_DEBUG(expr)
 
 
 #endif // ASSERTIONS_ENABLED
