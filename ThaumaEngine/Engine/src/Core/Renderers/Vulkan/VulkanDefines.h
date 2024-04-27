@@ -18,6 +18,14 @@ namespace VulkanDefines
 		}
 	};
 
+	struct SwapChainSupportDetails
+	{
+		VkSurfaceCapabilitiesKHR capabilities;
+		std::vector<VkSurfaceFormatKHR> formats;
+		std::vector<VkPresentModeKHR> presentModes;
+
+	};
+
 	const std::vector<const char *> ValidationLayers = {
 	"VK_LAYER_KHRONOS_validation"
 	};

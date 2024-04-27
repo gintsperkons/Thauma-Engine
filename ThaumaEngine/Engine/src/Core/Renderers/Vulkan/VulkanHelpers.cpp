@@ -1,6 +1,9 @@
 #include "VulkanHelpers.h"
+
 #include <set>
 #include <string>
+#include <limits>
+#include <algorithm>
 
 
 
@@ -94,3 +97,49 @@ b8 VulkanHelpers::CheckDeviceExtensionSupport(VkPhysicalDevice device)
 	return requiredExtensions.empty();
 }
 
+VkSurfaceFormatKHR VulkanHelpers::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &availableFormats)
+{
+	for (const auto &availableFormat : availableFormats)
+	{
+		if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB && availableFormat.colorSpace == VK_COLORSPACE_SRGB_NONLINEAR_KHR)
+		{
+			return availableFormat;
+		}
+	}
+	return availableFormats[0];
+}
+
+VkPresentModeKHR VulkanHelpers::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> &availablePresentModes)
+{
+	for (const auto& availablePresentMode: availablePresentModes)
+	{
+		if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR)
+		{
+			return availablePresentMode;
+		}
+	}
+	return VK_PRESENT_MODE_FIFO_KHR;
+}
+
+VkExtent2D VulkanHelpers::ChooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities, GLFWwindow &window)
+{
+	if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max())
+	{
+		return capabilities.currentExtent;
+	}
+	else
+	{
+		int width, height;
+		glfwGetFramebufferSize(&window,&width, &height);
+
+		VkExtent2D actualExtent = {
+			static_cast<uint32_t>(width),
+			static_cast<uint32_t>(height)
+		};
+
+		actualExtent.width = std::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
+		actualExtent.height = std::clamp(actualExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
+		
+		return actualExtent;
+	}
+}

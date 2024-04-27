@@ -14,13 +14,17 @@
 
 class VulkanRenderer : public BaseRenderer
 {
-	GLFWwindow* glfwWindow;
-	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
-	VkDevice device = VK_NULL_HANDLE;
-	VkSurfaceKHR vSurface;
+	GLFWwindow* m_glfwWindow;
+	VkPhysicalDevice m_pDevice = VK_NULL_HANDLE;
+	VkDevice m_lDevice = VK_NULL_HANDLE;
+	VkSurfaceKHR m_vSurface;
+	VkSwapchainKHR m_swapChain;
+	std::vector<VkImage> m_swapChainImages;
+	VkFormat m_swapChainImageFormat;
+	VkExtent2D m_swapChainExtent;
 
-	VkQueue graphicsQueue;
-	VkQueue presentQueue;
+	VkQueue m_graphicsQueue;
+	VkQueue m_presentQueue;
 
 
 
@@ -39,11 +43,13 @@ private:
 	void SelectPhysicalDevice();
 	void CreateLogicalDevice();
 	void CreateSurface();
+	void CreateSwapChain();
 	//Getter Functions
 	std::vector<const char*>GetInstanceExtensions();
 	//SupportCreationAndDestruction Functions
 	u32 RateDeviceSuitability(VkPhysicalDevice device);
 	VulkanDefines::QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
+	VulkanDefines::SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device);
 	VkResult CreateDebugUtilsMessangerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
 										  const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessanger);
 	void DestroyDebugUtilsMessangerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger,
