@@ -133,7 +133,7 @@ void VulkanRenderer::CreateLogicalDevice()
 	VkDeviceCreateInfo createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 	createInfo.pQueueCreateInfos = queueCreateInfos.data();
-	createInfo.queueCreateInfoCount = 1;
+	createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
 	createInfo.pEnabledFeatures = &deviceFeatures;
 	createInfo.enabledExtensionCount = static_cast<uint32_t>(VulkanDefines::DeviceExtensions.size());
 	createInfo.ppEnabledExtensionNames = VulkanDefines::DeviceExtensions.data();
@@ -152,6 +152,7 @@ void VulkanRenderer::CreateLogicalDevice()
 		throw std::runtime_error("failed to create logical device!");
 
 	vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
+	vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);
 }
 
 void VulkanRenderer::CreateSurface()
