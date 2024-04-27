@@ -2,9 +2,10 @@
 #include "Define.h"
 #include "VulkanDefines.h"
 #include <vulkan/vulkan.h>
+#include <vector>
 
 namespace VulkanHelpers { 
-u32 RateDeviceSuitability(VkPhysicalDevice device);
+b8 CheckInstanceExtensionSupport(std::vector<const char *> checkExtensions);
+b8 CheckValidationLayerSupport();
 b8 CheckDeviceExtensionSupport(VkPhysicalDevice device);
-VulkanDefines::QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
 }

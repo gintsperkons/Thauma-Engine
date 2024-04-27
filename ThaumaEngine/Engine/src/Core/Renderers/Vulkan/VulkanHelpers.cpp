@@ -1,35 +1,78 @@
 #include "VulkanHelpers.h"
 #include <set>
-#include <vector>
 #include <string>
 
 
-u32 VulkanHelpers::RateDeviceSuitability(VkPhysicalDevice device)
+
+
+b8 VulkanHelpers::CheckInstanceExtensionSupport(std::vector<const char *> checkExtensions)
 {
-	VkPhysicalDeviceProperties deviceProperties;
-	vkGetPhysicalDeviceProperties(device, &deviceProperties);
-	VkPhysicalDeviceFeatures deviceFeatures;
-	vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+	uint32_t extensionCount = 0;
+	vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
 
-	int score = 0;
+	std::vector<VkExtensionProperties> extensions(extensionCount);
+	vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
 
 
-	if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
+
+	for (const auto &checkExtension : checkExtensions)
 	{
-		score += 10000;
+		b8 hasExtension = false;
+		for (const auto &extension : extensions)
+		{
+			if (strcmp(checkExtension, extension.extensionName))
+			{
+				hasExtension = true;
+				break;
+			}
+
+		}
+		if (!hasExtension)
+		{
+			printf("Not found extension: %s\n", checkExtension);
+			return false;
+		}
 	}
-	VulkanDefines::QueueFamilyIndices indices = FindQueueFamilies(device);
-	if (indices.graphicsFamily.has_value())
-		score += 1000;
+	return true;
 
-	if (!CheckDeviceExtensionSupport(device))
-	{
-		score += -1;
-	}
-
-
-	return score;
 }
+
+b8 VulkanHelpers::CheckValidationLayerSupport()
+{
+	uint32_t layerCount;
+	vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+
+	std::vector<VkLayerProperties> layers = std::vector<VkLayerProperties>(layerCount);
+	vkEnumerateInstanceLayerProperties(&layerCount, layers.data());
+
+	for (const char *layerName : VulkanDefines::ValidationLayers)
+	{
+		b8 layerFound = false;
+
+		for (const auto &layerProperties : layers)
+		{
+			if (strcmp(layerName, layerProperties.layerName) == 0)
+			{
+				layerFound = true;
+				break;
+			}
+		}
+
+		if (!layerFound)
+		{
+
+			printf("Not found layer: %s\n", layerName);
+			return false;
+		}
+	}
+
+
+
+
+	return true;
+}
+
+
 
 b8 VulkanHelpers::CheckDeviceExtensionSupport(VkPhysicalDevice device)
 {
@@ -51,26 +94,3 @@ b8 VulkanHelpers::CheckDeviceExtensionSupport(VkPhysicalDevice device)
 	return requiredExtensions.empty();
 }
 
-VulkanDefines::QueueFamilyIndices VulkanHelpers::FindQueueFamilies(VkPhysicalDevice device)
-{
-	VulkanDefines::QueueFamilyIndices indices;
-
-	uint32_t queueFamilyCount = 0;
-	vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
-
-	std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
-	vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
-
-	int i = 0;
-	for (const auto &queueFamily : queueFamilies)
-	{
-		if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
-			indices.graphicsFamily = i;
-
-		if (indices.isComplete())
-			break;
-		i++;
-	}
-
-	return indices;
-}

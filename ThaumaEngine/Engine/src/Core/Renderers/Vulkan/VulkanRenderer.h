@@ -8,6 +8,8 @@
 #include <GLFW/glfw3native.h>
 #include <vulkan/vulkan.h>
 
+
+#include "VulkanDefines.h"
 #include "Core/Renderers/BaseRenderer/BaseRenderer.h"
 
 class VulkanRenderer : public BaseRenderer
@@ -15,29 +17,11 @@ class VulkanRenderer : public BaseRenderer
 	GLFWwindow* glfwWindow;
 	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 	VkDevice device = VK_NULL_HANDLE;
-	VkSurfaceKHR surface;
+	VkSurfaceKHR vSurface;
 
 	VkQueue graphicsQueue;
+	VkQueue presentQueue;
 
-	struct QueueFamilyIndices
-	{
-		std::optional<uint32_t> graphicsFamily;
-
-		bool isComplete()
-		{
-			return graphicsFamily.has_value();
-		}
-	};
-
-
-
-	const std::vector<const char*> validationLayers = {
-	"VK_LAYER_KHRONOS_validation"
-	};
-
-	const std::vector<const char *> deviceExtensions = {
-	VK_KHR_SWAPCHAIN_EXTENSION_NAME
-	};
 
 
 	#ifdef TDEBUG
@@ -57,10 +41,9 @@ private:
 	void CreateSurface();
 	//Getter Functions
 	std::vector<const char*>GetInstanceExtensions();
-	//Checker Functions
-	b8 CheckInstanceExtensionSupport(std::vector<const char*>);
-	b8 CheckValidationLayerSupport();
 	//SupportCreationAndDestruction Functions
+	u32 RateDeviceSuitability(VkPhysicalDevice device);
+	VulkanDefines::QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
 	VkResult CreateDebugUtilsMessangerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
 										  const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessanger);
 	void DestroyDebugUtilsMessangerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger,
