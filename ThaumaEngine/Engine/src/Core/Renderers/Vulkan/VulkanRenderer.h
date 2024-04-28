@@ -22,6 +22,7 @@ class VulkanRenderer : public BaseRenderer
 	std::vector<VkImage> m_swapChainImages;
 	VkFormat m_swapChainImageFormat;
 	VkExtent2D m_swapChainExtent;
+	std::vector<VkImageView> m_swapChainImageViews;
 
 	VkQueue m_graphicsQueue;
 	VkQueue m_presentQueue;
@@ -44,6 +45,7 @@ private:
 	void CreateLogicalDevice();
 	void CreateSurface();
 	void CreateSwapChain();
+	void CreateImageViews();
 	//Getter Functions
 	std::vector<const char*>GetInstanceExtensions();
 	//SupportCreationAndDestruction Functions

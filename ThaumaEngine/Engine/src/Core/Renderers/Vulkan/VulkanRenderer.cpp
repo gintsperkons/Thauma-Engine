@@ -222,6 +222,34 @@ void VulkanRenderer::CreateSwapChain()
 
 	m_swapChainExtent = extent;
 	m_swapChainImageFormat = surfaceFormat.format;
+
+	for (i16 i = 0; i < m_swapChainImageViews.size(); i++)
+	{
+		VkImageViewCreateInfo createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+		createInfo.image = m_swapChainImages[i];
+		createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+		createInfo.format = m_swapChainImageFormat;
+		createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+		createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+		createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+		createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+		createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		createInfo.subresourceRange.baseMipLevel = 0;
+		createInfo.subresourceRange.levelCount = 1;
+		createInfo.subresourceRange.baseArrayLayer = 0;
+		createInfo.subresourceRange.layerCount = 0;
+		if (vkCreateImageView(m_lDevice,&createInfo,nullptr,&m_swapChainImageViews[i]) != VK_SUCCESS)
+		{
+			throw std::runtime_error("failed to create image views!");
+		}
+
+	}
+}
+
+void VulkanRenderer::CreateImageViews()
+{
+	m_swapChainImageViews.resize(m_swapChainImages.size());
 }
 
 std::vector<const char *> VulkanRenderer::GetInstanceExtensions()
@@ -389,6 +417,10 @@ VKAPI_ATTR VkBool32 VKAPI_CALL VulkanRenderer::DebugCallback(VkDebugUtilsMessage
 
 VulkanRenderer::~VulkanRenderer()
 {
+	for (auto imageView: m_swapChainImageViews)
+	{
+		vkDestroyImageView(m_lDevice,imageView,nullptr);
+	}
 	vkDestroySwapchainKHR(m_lDevice, m_swapChain, nullptr);
 	vkDestroySurfaceKHR(vInstance, m_vSurface, nullptr);
 	vkDestroyDevice(m_lDevice, nullptr);
@@ -410,6 +442,7 @@ int VulkanRenderer::Init(GLFWwindow *window)
 	SelectPhysicalDevice();
 	CreateLogicalDevice();
 	CreateSwapChain();
+	CreateImageViews();
 
 
 	return 0;
