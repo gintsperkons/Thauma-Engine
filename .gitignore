@@ -5,3 +5,6 @@ Binaries/*
 .vs/*
 *.vcxproj*
 *.sln
+
+#Compiled Shaders
+*.spv
