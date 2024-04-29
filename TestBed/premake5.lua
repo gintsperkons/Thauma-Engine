@@ -5,8 +5,10 @@ cppdialect "C++20"
 targetdir "Binaries/%{cfg.buildcfg}"
 staticruntime "off"
 
+
 targetdir("%{wks.location}/Binaries/" .. OutputDir .. "/%{prj.name}")
 objdir("%{wks.location}/Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")
+debugdir("%{wks.location}/Binaries/" .. OutputDir .. "/%{prj.name}")
 
 includedirs {"src",
 "%{wks.location}/ThaumaEngine/Engine/src"}
@@ -14,6 +16,8 @@ includedirs {"src",
 links {
     "ThaumaEngineLib"
 }
+
+
 
 files {"src/**.h", "src/**.cpp"}
 
