@@ -7,6 +7,8 @@ startproject "TestBed"
 
 OutputDir = "%{cfg.architecture}-%{cfg.system}-%{cfg.buildcfg}"
 
+
+
 group "Dependencies"
 include "Vendor/Libraries/GLFW"
 group ""
@@ -18,4 +20,3 @@ group ""
 group ""
 
 include "TestBed"
-prebuildcommands {"{ECHO} OutputDir"}

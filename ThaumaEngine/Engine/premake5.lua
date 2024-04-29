@@ -22,14 +22,14 @@ project "ThaumaEngineLib"
 
     targetdir ("%{wks.location}/Binaries/" .. OutputDir .. "/%{prj.name}")
     objdir ("%{wks.location}/Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")
-    
-
+    debugdir("%{wks.location}/Binaries/" .. OutputDir .. "/%{prj.name}")
 
     postbuildcommands
     {   
         "{mkdir} %{wks.location}/Binaries/" .. OutputDir .. "/TestBed/",
         "{ECHO} %{cfg.longname}",
-        "{COPYFILE} %{cfg.buildtarget.relpath} %{wks.location}/Binaries/" .. OutputDir .. "/TestBed/"
+        "{COPYFILE} %{cfg.buildtarget.relpath} %{wks.location}/Binaries/" .. OutputDir .. "/TestBed/",
+        "{COPYDIR} Shaders %{wks.location}/Binaries/" .. OutputDir .. "/TestBed/Shaders/"
     }
 
     filter "system:windows"
