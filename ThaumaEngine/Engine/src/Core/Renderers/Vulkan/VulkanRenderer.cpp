@@ -252,6 +252,13 @@ void VulkanRenderer::CreateImageViews()
 	m_swapChainImageViews.resize(m_swapChainImages.size());
 }
 
+void VulkanRenderer::CreateGraphicsPipeline()
+{
+	auto vertShaderCode = VulkanHelpers::ReadFileSPV("Shaders/Compiled/base-vert.spv");
+	auto fragShaderCode = VulkanHelpers::ReadFileSPV("Shaders/Compiled/base-frag.spv");
+	//printf("%c",vertShaderCode);
+}
+
 std::vector<const char *> VulkanRenderer::GetInstanceExtensions()
 {
 	uint32_t glfwExtensionCount = 0;
@@ -443,6 +450,7 @@ int VulkanRenderer::Init(GLFWwindow *window)
 	CreateLogicalDevice();
 	CreateSwapChain();
 	CreateImageViews();
+	CreateGraphicsPipeline();
 
 
 	return 0;

@@ -1,9 +1,11 @@
 #include "VulkanHelpers.h"
 
 #include <set>
+#include <filesystem>
 #include <fstream>
 #include <string>
 #include <limits>
+#include <iostream>
 #include <algorithm>
 
 
@@ -149,7 +151,11 @@ std::vector<char> VulkanHelpers::ReadFileSPV(const std::string &filename)
 {
 	std::ifstream file(filename,std::ios::ate | std::ios::binary);
 
-	if (file.is_open())
+	std::filesystem::path p = filename;
+	std::cout << "Current path is " << std::filesystem::current_path() << '\n';
+	std::cout << "Absolute path for " << p << " is " << std::filesystem::absolute(p) << '\n';
+
+	if (!file.is_open())
 	{
 		throw std::runtime_error("failed to open file!");
 	}

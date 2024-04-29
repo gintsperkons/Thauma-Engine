@@ -46,6 +46,7 @@ private:
 	void CreateSurface();
 	void CreateSwapChain();
 	void CreateImageViews();
+	void CreateGraphicsPipeline();
 	//Getter Functions
 	std::vector<const char*>GetInstanceExtensions();
 	//SupportCreationAndDestruction Functions
