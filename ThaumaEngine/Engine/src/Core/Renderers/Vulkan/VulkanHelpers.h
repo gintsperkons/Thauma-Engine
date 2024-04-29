@@ -13,5 +13,6 @@ b8 CheckDeviceExtensionSupport(VkPhysicalDevice device);
 VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &availableFormats);
 VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> &availablePresentModes);
 VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities, GLFWwindow &window);
+VkShaderModule CreateShaderModule(VkDevice device, const std::vector<char> &code);
 std::vector<char> ReadFileSPV(const std::string &filename);
 }
