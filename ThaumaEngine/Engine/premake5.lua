@@ -24,14 +24,18 @@ project "ThaumaEngineLib"
     objdir ("%{wks.location}/Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")
     debugdir("%{wks.location}/Binaries/" .. OutputDir .. "/%{prj.name}")
 
+prebuildcommands
+{
+        "%{prj.location}/Shaders/CompileShaders.bat"
+}
+
     postbuildcommands
     {   
+        "{ECHO} %{prj.location}",
         "{mkdir} %{wks.location}/Binaries/" .. OutputDir .. "/TestBed/",
-        "{ECHO} %{cfg.longname}",
         "{COPYFILE} %{cfg.buildtarget.relpath} %{wks.location}/Binaries/" .. OutputDir .. "/TestBed/",
-        "Shaders/CompileShaders.bat",
-        "{mkdir} %{wks.location}/Binaries/" .. OutputDir .. "/TestBed/Shaders",
-        "{COPYDIR} Shaders %{wks.location}/Binaries/" .. OutputDir .. "/TestBed/Shaders/"
+        "{mkdir} %{wks.location}/Binaries/" .. OutputDir .. "/TestBed/Shaders/",
+        "{COPYDIR} %{prj.location}/Shaders %{wks.location}/Binaries/" .. OutputDir .. "/TestBed/Shaders/"
     }
 
     filter "system:windows"
