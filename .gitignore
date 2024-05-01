@@ -11,3 +11,5 @@ Binaries/*
 
 #gmake2
 Makefile
+#binaries
+*.exe
