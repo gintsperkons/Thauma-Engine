@@ -28,7 +28,27 @@ if not exist !directory!!executable! (
     copy "!directory!Temp\!executable!" "!directory!"
     rd /s /q "!directory!Temp"
 ) 
+
+
 !directory!!executable! %1
+
+if  "%~1"=="vs2022" (
+    if "%~2"=="open" (
+        
+        for /f "delims=" %%i in ('dir /s /b *.sln') do (
+            set "slnPath=%%i"
+            goto :continue
+        )
+
+        :continue
+        REM Print the path of the .sln file
+        echo !slnPath!
+        start devenv !slnPath!
+
+    )
+)
+
+
 
 popd
 )   
