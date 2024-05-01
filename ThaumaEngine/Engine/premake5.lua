@@ -29,6 +29,8 @@ project "ThaumaEngineLib"
         "{mkdir} %{wks.location}/Binaries/" .. OutputDir .. "/TestBed/",
         "{ECHO} %{cfg.longname}",
         "{COPYFILE} %{cfg.buildtarget.relpath} %{wks.location}/Binaries/" .. OutputDir .. "/TestBed/",
+        "Shaders/CompileShaders.bat",
+        "{mkdir} %{wks.location}/Binaries/" .. OutputDir .. "/TestBed/Shaders",
         "{COPYDIR} Shaders %{wks.location}/Binaries/" .. OutputDir .. "/TestBed/Shaders/"
     }
 
