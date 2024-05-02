@@ -31,5 +31,22 @@ if "%output%"=="2" (
 )
 
 call "!directory!python.exe" "!%~dp0!Setup.py"
+
+if  "%~1"=="vs2022" (
+    if "%~2"=="open" (
+        
+        for /f "delims=" %%i in ('dir /s /b *.sln') do (
+            set "slnPath=%%i"
+            goto :continue
+        )
+
+        :continue
+        REM Print the path of the .sln file
+        echo !slnPath!
+        start devenv !slnPath!
+
+    )
+)
+
 popd
 popd

@@ -16,10 +16,10 @@ def SetupPremake():
         Utils.checkDirectory(location+"Temp\\")
         Utils.downloadFile(url,location,"Temp\\premake.zip")
         print("Unziping Premake")
-        Utils.unzipFile(location+"Temp\\premake.zip",location)
+        Utils.unzipFile(location+"Temp\\premake.zip",location+"Temp\\")
         print("Removing Unwanted files")
         shutil.move(location+"Temp\\premake5.exe",location+"\\premake5.exe")
-        shutil.rmtree(location)
+        shutil.rmtree(location+"Temp\\")
         print("Premake setup complete")
     os.system(f"{location+'premake5.exe'} vs2022")
 

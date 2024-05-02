@@ -18,4 +18,5 @@ for root, dirs, files in os.walk(Defines.projectPath):
         if dir == "__pycache__":
             shutil.rmtree(os.path.join(root, dir))
 
-shutil.rmtree(Defines.projectPath+"\\Binaries")
+if os.path.exists(Defines.projectPath+"\\Binaries"):
+    shutil.rmtree(Defines.projectPath+"\\Binaries")

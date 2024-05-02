@@ -6,7 +6,6 @@ sys.path.insert(0, os.path.join(current_dir))
 import Defines
 sys.path.insert(0, Defines.pythonPath+"\\Lib\\site-packages")
 
-print(sys.path)
 def InstallPythonPackage(packageName):
     os.system(f'{Defines.pythonExecutable} {Defines.pipPath} install {packageName}')
 
