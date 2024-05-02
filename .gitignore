@@ -15,4 +15,4 @@ Makefile
 *.exe
 
 Vendor/Binaries/*
-*__pycache__/*
+*/__pycache__/*
