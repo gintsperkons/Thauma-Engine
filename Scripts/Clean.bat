@@ -1,21 +1,17 @@
 @echo off
 setlocal enabledelayedexpansion
+set directory=Vendor\Binaries\
 
 pushd %~dp0
 pushd ..
 
-REM Remove .vxproj and .sln files from all subfolders
-for /r %%i in (*) do (
-    if "%%~xi"==".vcxproj" del /s /q "%%i"
-    if "%%~xi"==".vcxproj.user" del /s /q "%%i"
-    if "%%~xi"==".vcxproj.filters" del /s /q "%%i"
-    if "%%~xi"==".sln" del /s /q "%%i"
+echo Cleaning Up Generated Files
+call !directory!Python\python.exe !%~dp0!Clean.py
+
+if %~1==all (
+    echo Cleaning Up Downloads
+    rmdir /s /q !directory!
 )
 
-REM Remove /Binaries/ directories from all subfolders
-for /d /r %%i in (*) do (
-    if "%%~nxi"=="Binaries" rmdir /s /q "%%i"
-    if "%%~nxi"=="Vendor/Binaries" rmdir /s /q "%%i"
-)
-
+popd
 popd
