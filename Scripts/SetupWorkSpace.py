@@ -12,8 +12,12 @@ def SetupPremake():
     if os.path.exists(location+"premake5.exe"):
         print("Premake already setup")
     else:
+        print("Downloding Premake")
+        Utils.checkDirectory(location+"Temp\\")
         Utils.downloadFile(url,location,"Temp\\premake.zip")
+        print("Unziping Premake")
         Utils.unzipFile(location+"Temp\\premake.zip",location)
+        print("Removing Unwanted files")
         shutil.move(location+"Temp\\premake5.exe",location+"\\premake5.exe")
         shutil.rmtree(location)
         print("Premake setup complete")

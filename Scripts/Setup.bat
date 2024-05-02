@@ -18,10 +18,13 @@ if "%output%"=="2" (
     if not exist !directory! (
         mkdir !directory!
     )
-    echo Downloading python ...
+    echo Downloading python 
     powershell.exe -Command "Invoke-WebRequest -Uri '!archiveLink!'  -OutFile '!directory!python.zip'"
+    echo Downloading get-pip.py 
     powershell.exe -Command "Invoke-WebRequest -Uri '!getpipLink!'  -OutFile '!directory!get-pip.py'"
+    echo Extracting python 
     powershell.exe -Command "Expand-Archive -Path '!directory!python.zip' -DestinationPath '!directory!' -Force"
+    echo Installing pip
     call "!directory!python.exe" "!directory!get-pip.py"
     echo Removing Python archive
     del "!directory!python.zip"
