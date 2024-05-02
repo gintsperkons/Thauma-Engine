@@ -13,3 +13,5 @@ Binaries/*
 Makefile
 #binaries
 *.exe
+
+Vendor/Binaries/*
