@@ -56,7 +56,7 @@ TAPI void Log(Logger::Level level, const char* format, ...);
 #endif
 
 #if LOG_TRACE_ENABLED == 1
-#define LOG_TRACE(format, ...) Loga(Logger::Level::TRACE, format, __VA_ARGS__)
+#define LOG_TRACE(format, ...) Log(Logger::Level::TRACE, format, __VA_ARGS__)
 #else
 #define LOG_TRACE(format, ...)
 #endif
