@@ -28,6 +28,7 @@ class VulkanRenderer : public BaseRenderer
 	VkPipeline m_graphicsPipeline;
 	std::vector<VkFramebuffer> m_swapChainFramebuffers;
 	VkCommandPool m_commandPool;
+	VkCommandBuffer m_commandBuffer;
 
 	VkQueue m_graphicsQueue;
 	VkQueue m_presentQueue;
@@ -55,11 +56,16 @@ private:
 	void CreateGraphicsPipeline();
 	void CreateFrameBuffer();
 	void CreateCommandPool();
+	void CreateCommandBuffer();
+	
+
+
 
 
 	//Getter Functions
 	std::vector<const char*>GetInstanceExtensions();
 	//SupportCreationAndDestruction Functions
+	void RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 	u32 RateDeviceSuitability(VkPhysicalDevice device);
 	VulkanDefines::QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
 	VulkanDefines::SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device);
