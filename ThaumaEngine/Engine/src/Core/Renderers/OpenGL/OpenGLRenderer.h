@@ -13,4 +13,5 @@ public:
 	void Draw();
 	void Update();
 	void Destroy();
+	void Complete();
 };

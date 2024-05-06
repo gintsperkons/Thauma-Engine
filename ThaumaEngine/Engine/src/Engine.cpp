@@ -40,6 +40,7 @@ int ThaumaEngine::Run()
 	while (!window->ShouldClose())
 	{
 		window->Update();
+		renderer->Draw();
 		MemoryManager::LogAllocations();
 	}
 	
@@ -48,6 +49,7 @@ int ThaumaEngine::Run()
 
 int ThaumaEngine::Terminate()
 {
+	renderer->Complete();
 	delete renderer;
 	delete window;
 	delete ThaumaEngine::instance;

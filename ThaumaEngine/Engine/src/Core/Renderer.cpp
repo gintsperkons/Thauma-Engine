@@ -26,6 +26,16 @@ void Renderer::Init(int renderType,GLFWwindow* window)
 	}
 }
 
+void Renderer::Draw()
+{
+	currentRenderer->Draw();
+}
+
+void Renderer::Complete()
+{
+	currentRenderer->Complete();
+}
+
 void Renderer::Destroy()
 {
 	currentRenderer->Destroy();

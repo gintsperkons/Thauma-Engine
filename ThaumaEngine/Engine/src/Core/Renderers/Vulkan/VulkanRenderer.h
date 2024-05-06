@@ -32,7 +32,9 @@ class VulkanRenderer : public BaseRenderer
 
 	VkQueue m_graphicsQueue;
 	VkQueue m_presentQueue;
-
+	VkSemaphore m_imageAvailableSemaphore;
+	VkSemaphore m_renderFinishedSemaphore;
+	VkFence m_inFlightFence;
 
 
 	#ifdef TDEBUG
@@ -57,6 +59,7 @@ private:
 	void CreateFrameBuffer();
 	void CreateCommandPool();
 	void CreateCommandBuffer();
+	void CreateSyncObject();
 	
 
 
@@ -89,4 +92,5 @@ public:
 	void Draw();
 	void Update();
 	void Destroy();
+	void Complete();
 };

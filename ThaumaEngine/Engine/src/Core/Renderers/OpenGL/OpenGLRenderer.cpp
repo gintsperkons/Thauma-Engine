@@ -24,3 +24,7 @@ void OpenGLRenderer::Update()
 void OpenGLRenderer::Destroy()
 {
 }
+
+void OpenGLRenderer::Complete()
+{
+}
