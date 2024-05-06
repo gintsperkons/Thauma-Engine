@@ -14,7 +14,6 @@ for root, dirs, files in os.walk(Defines.projectPath):
             if file.endswith(extension):
                 os.remove(os.path.join(root, file))
     for dir in dirs:
-        print(dir)
         if dir == "__pycache__":
             shutil.rmtree(os.path.join(root, dir))
 
