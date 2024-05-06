@@ -33,7 +33,12 @@ namespace VulkanDefines
 	const std::vector<const char *> DeviceExtensions = {
 	VK_KHR_SWAPCHAIN_EXTENSION_NAME
 	};
+	
 
+	static std::vector<VkDynamicState> DynamicStates = {
+		VK_DYNAMIC_STATE_VIEWPORT,
+		VK_DYNAMIC_STATE_SCISSOR
+	};
 
 #ifdef TDEBUG
 	const bool enableValidationLayers = true;

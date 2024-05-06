@@ -23,6 +23,9 @@ class VulkanRenderer : public BaseRenderer
 	VkFormat m_swapChainImageFormat;
 	VkExtent2D m_swapChainExtent;
 	std::vector<VkImageView> m_swapChainImageViews;
+	VkRenderPass m_renderPass;
+	VkPipelineLayout m_piplineLayout;
+	VkPipeline m_graphicsPipeline;
 
 	VkQueue m_graphicsQueue;
 	VkQueue m_presentQueue;
@@ -46,6 +49,7 @@ private:
 	void CreateSurface();
 	void CreateSwapChain();
 	void CreateImageViews();
+	void CreateRenderPass();
 	void CreateGraphicsPipeline();
 	//Getter Functions
 	std::vector<const char*>GetInstanceExtensions();
