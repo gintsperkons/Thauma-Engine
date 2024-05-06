@@ -28,11 +28,10 @@ allocationData.allocationTypeDataArray[static_cast<int>(memoryType)].AllocatedAm
 
 void MemoryManager::LogAllocations()
 {
-	return;
-	LOG_DEBUG("Total Allocated: %d\n", allocationData.totalAllocated);
+	LOG_TRACE("Total Allocated: %d\n", allocationData.totalAllocated);
 	for (auto &typeData : allocationData.allocationTypeDataArray)
 	{
-		LOG_DEBUG("Allocated for type %s: %d\n", typeData.Name, typeData.AllocatedAmount);
+		//LOG_TRACE("Allocated for type %s: %d\n", typeData.Name, typeData.AllocatedAmount);
 	}
 }
 

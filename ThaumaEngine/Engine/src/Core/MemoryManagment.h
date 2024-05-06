@@ -23,6 +23,7 @@ namespace MemoryManager
 	struct AllocationData
 	{
 		char Name[6] = "Total";
+		//Bytes
 		i64 totalAllocated = 0;
 		AllocationTypeData allocationTypeDataArray[2] = {
 	{"Unknown", 0},
