@@ -26,6 +26,8 @@ class VulkanRenderer : public BaseRenderer
 	VkRenderPass m_renderPass;
 	VkPipelineLayout m_piplineLayout;
 	VkPipeline m_graphicsPipeline;
+	std::vector<VkFramebuffer> m_swapChainFramebuffers;
+	VkCommandPool m_commandPool;
 
 	VkQueue m_graphicsQueue;
 	VkQueue m_presentQueue;
@@ -51,6 +53,10 @@ private:
 	void CreateImageViews();
 	void CreateRenderPass();
 	void CreateGraphicsPipeline();
+	void CreateFrameBuffer();
+	void CreateCommandPool();
+
+
 	//Getter Functions
 	std::vector<const char*>GetInstanceExtensions();
 	//SupportCreationAndDestruction Functions
