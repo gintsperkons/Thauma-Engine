@@ -31,6 +31,11 @@ void Renderer::Draw()
 	currentRenderer->Draw();
 }
 
+void Renderer::Update()
+{
+	currentRenderer->Update();
+}
+
 void Renderer::Complete()
 {
 	currentRenderer->Complete();

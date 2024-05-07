@@ -40,6 +40,7 @@ int ThaumaEngine::Run()
 	while (!window->ShouldClose())
 	{
 		window->Update();
+		renderer->Update();
 		renderer->Draw();
 		MemoryManager::LogAllocations();
 	}

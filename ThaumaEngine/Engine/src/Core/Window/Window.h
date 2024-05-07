@@ -4,9 +4,16 @@ struct GLFWwindow;
 
 class Window
 {
-	GLFWwindow* window;
+	GLFWwindow* m_window;
+	bool isResized = false;
+	static void FrameBufferResizeCallback(GLFWwindow* window, int width, int height);
 	
 public:
+	void Resized() {
+		isResized = true;
+	}
+	bool IsResized() { return isResized; }
+	void ResetResize() { isResized = false; }
 	TAPI Window();
 	
 	TAPI void Init(const char *title = "Thauma Engine Window", int width = 800, int height = 600);
@@ -14,7 +21,7 @@ public:
 	TAPI void Update();
 	TAPI GLFWwindow *GetWindow()
 	{
-		return window;
+		return m_window;
 	};
 	TAPI ~Window();
 };

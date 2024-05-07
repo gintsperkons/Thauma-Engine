@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <map>
 #include <set>
+#include <Core/Window/Window.h>
 
 void VulkanRenderer::CreateInstance()
 {
@@ -527,6 +528,14 @@ void VulkanRenderer::CreateSyncObject()
 
 void VulkanRenderer::RecreateSwapChain()
 {
+	int width = 0, height = 0;
+	glfwGetFramebufferSize(m_glfwWindow, &width, &height);
+	while (width == 0 || height == 0) {
+		glfwGetFramebufferSize(m_glfwWindow, &width, &height);
+		glfwWaitEvents();
+	}
+
+
 	vkDeviceWaitIdle(m_lDevice);
 
 	CleanSwapChain();
@@ -878,7 +887,11 @@ void VulkanRenderer::Draw()
 }
 
 void VulkanRenderer::Update()
-{}
+{
+	Window* parentWindowClass = reinterpret_cast<Window*>(glfwGetWindowUserPointer(m_glfwWindow));
+	m_frameBufferResized = parentWindowClass->IsResized();
+	parentWindowClass->ResetResize();
+}
 
 void VulkanRenderer::Destroy()
 {

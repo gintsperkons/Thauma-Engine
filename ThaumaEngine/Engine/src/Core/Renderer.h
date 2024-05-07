@@ -11,6 +11,7 @@ class Renderer {
 public:
 	void Init(int renderType, GLFWwindow* window);
 	void Draw();
+	void Update();
 	void Complete();
 	~Renderer();
 
