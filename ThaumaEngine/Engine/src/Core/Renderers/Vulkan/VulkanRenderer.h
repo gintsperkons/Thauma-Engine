@@ -14,6 +14,9 @@
 
 class VulkanRenderer : public BaseRenderer
 {
+	const int MAX_FRAMES_IN_FLIGHT = 2;
+
+	u32 m_currentFrame = 0;
 	GLFWwindow* m_glfwWindow;
 	VkPhysicalDevice m_pDevice = VK_NULL_HANDLE;
 	VkDevice m_lDevice = VK_NULL_HANDLE;
@@ -28,13 +31,13 @@ class VulkanRenderer : public BaseRenderer
 	VkPipeline m_graphicsPipeline;
 	std::vector<VkFramebuffer> m_swapChainFramebuffers;
 	VkCommandPool m_commandPool;
-	VkCommandBuffer m_commandBuffer;
+	std::vector < VkCommandBuffer> m_commandBuffers;
 
 	VkQueue m_graphicsQueue;
 	VkQueue m_presentQueue;
-	VkSemaphore m_imageAvailableSemaphore;
-	VkSemaphore m_renderFinishedSemaphore;
-	VkFence m_inFlightFence;
+	std::vector<VkSemaphore> m_imageAvailableSemaphore;
+	std::vector<VkSemaphore> m_renderFinishedSemaphore;
+	std::vector<VkFence> m_inFlightFence;
 
 
 	#ifdef TDEBUG
@@ -58,7 +61,7 @@ private:
 	void CreateGraphicsPipeline();
 	void CreateFrameBuffer();
 	void CreateCommandPool();
-	void CreateCommandBuffer();
+	void CreateCommandBuffers();
 	void CreateSyncObject();
 	
 
