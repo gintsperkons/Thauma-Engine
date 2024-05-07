@@ -448,7 +448,7 @@ void VulkanRenderer::CreateGraphicsPipeline()
 	vkDestroyShaderModule(m_lDevice, vertShaderModule, nullptr);
 }
 
-void VulkanRenderer::CreateFrameBuffer()
+void VulkanRenderer::CreateFrameBuffers()
 {
 	m_swapChainFramebuffers.resize(m_swapChainImageViews.size());
 
@@ -523,6 +523,18 @@ void VulkanRenderer::CreateSyncObject()
 			throw std::runtime_error("failed to create synchronization objects for a frame!");
 		}
 	}
+}
+
+void VulkanRenderer::RecreateSwapChain()
+{
+	vkDeviceWaitIdle(m_lDevice);
+
+	CleanSwapChain();
+
+	CreateSwapChain();
+	CreateImageViews();
+	CreateFrameBuffers();
+
 }
 
 void VulkanRenderer::RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex) 
@@ -739,8 +751,22 @@ VKAPI_ATTR VkBool32 VKAPI_CALL VulkanRenderer::DebugCallback(VkDebugUtilsMessage
 	return VK_FALSE;
 }
 
+void VulkanRenderer::CleanSwapChain()
+{
+
+	for (auto framebuffer : m_swapChainFramebuffers) {
+		vkDestroyFramebuffer(m_lDevice, framebuffer, nullptr);
+	}
+	for (auto imageView : m_swapChainImageViews)
+	{
+		vkDestroyImageView(m_lDevice, imageView, nullptr);
+	}
+	vkDestroySwapchainKHR(m_lDevice, m_swapChain, nullptr);
+}
+
 VulkanRenderer::~VulkanRenderer()
 {
+	CleanSwapChain();
 	for(size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
 	{
 		vkDestroySemaphore(m_lDevice, m_imageAvailableSemaphore[i], nullptr);
@@ -749,17 +775,9 @@ VulkanRenderer::~VulkanRenderer()
 	}
 	
 	vkDestroyCommandPool(m_lDevice, m_commandPool, nullptr);
-	for (auto framebuffer : m_swapChainFramebuffers) {
-		vkDestroyFramebuffer(m_lDevice, framebuffer, nullptr);
-	}
 	vkDestroyPipeline(m_lDevice, m_graphicsPipeline, nullptr);
 	vkDestroyPipelineLayout(m_lDevice, m_piplineLayout, nullptr);
 	vkDestroyRenderPass(m_lDevice,m_renderPass,nullptr);
-	for (auto imageView: m_swapChainImageViews)
-	{
-		vkDestroyImageView(m_lDevice,imageView,nullptr);
-	}
-	vkDestroySwapchainKHR(m_lDevice, m_swapChain, nullptr);
 	vkDestroySurfaceKHR(vInstance, m_vSurface, nullptr);
 	vkDestroyDevice(m_lDevice, nullptr);
 	if (enableValidationLayers)
@@ -783,7 +801,7 @@ int VulkanRenderer::Init(GLFWwindow *window)
 	CreateImageViews();
 	CreateRenderPass();
 	CreateGraphicsPipeline();
-	CreateFrameBuffer();
+	CreateFrameBuffers();
 	CreateCommandPool();
 	CreateCommandBuffers();
 	CreateSyncObject();
@@ -795,10 +813,21 @@ int VulkanRenderer::Init(GLFWwindow *window)
 void VulkanRenderer::Draw()
 {
 	vkWaitForFences(m_lDevice, 1, &m_inFlightFence[m_currentFrame], VK_TRUE, UINT64_MAX);
-	vkResetFences(m_lDevice, 1, &m_inFlightFence[m_currentFrame]);
 	uint32_t imageIndex;
-	vkAcquireNextImageKHR(m_lDevice, m_swapChain, UINT64_MAX, m_imageAvailableSemaphore[m_currentFrame], VK_NULL_HANDLE, &imageIndex);
+
+
+	VkResult result = vkAcquireNextImageKHR(m_lDevice, m_swapChain, UINT64_MAX, m_imageAvailableSemaphore[m_currentFrame], VK_NULL_HANDLE, &imageIndex);
 	
+	if (result == VK_ERROR_OUT_OF_DATE_KHR)
+	{
+		RecreateSwapChain();
+		return;
+	}
+	else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
+		throw std::runtime_error("failed to acquire swap chain image!");
+	}
+
+	vkResetFences(m_lDevice, 1, &m_inFlightFence[m_currentFrame]);
 	vkResetCommandBuffer(m_commandBuffers[m_currentFrame], 0);
 	RecordCommandBuffer(m_commandBuffers[m_currentFrame], imageIndex);
 
@@ -833,7 +862,17 @@ void VulkanRenderer::Draw()
 	presentInfo.pSwapchains = swapChains;
 	presentInfo.pImageIndices = &imageIndex;
 	presentInfo.pResults = nullptr; // Optional
-	vkQueuePresentKHR(m_presentQueue, &presentInfo);
+	result = vkQueuePresentKHR(m_presentQueue, &presentInfo);
+
+	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_frameBufferResized) {
+		m_frameBufferResized = false;
+		RecreateSwapChain();
+		return;
+	}
+	else if (result != VK_SUCCESS) {
+		throw std::runtime_error("failed to present swap chain image!");
+	}
+
 
 	m_currentFrame = (m_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 }

@@ -18,6 +18,7 @@ class VulkanRenderer : public BaseRenderer
 
 	u32 m_currentFrame = 0;
 	GLFWwindow* m_glfwWindow;
+	bool m_frameBufferResized = false;
 	VkPhysicalDevice m_pDevice = VK_NULL_HANDLE;
 	VkDevice m_lDevice = VK_NULL_HANDLE;
 	VkSurfaceKHR m_vSurface;
@@ -59,10 +60,11 @@ private:
 	void CreateImageViews();
 	void CreateRenderPass();
 	void CreateGraphicsPipeline();
-	void CreateFrameBuffer();
+	void CreateFrameBuffers();
 	void CreateCommandPool();
 	void CreateCommandBuffers();
 	void CreateSyncObject();
+	void RecreateSwapChain();
 	
 
 
@@ -88,6 +90,7 @@ private:
 		const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
 		void* pUserData);
 
+	void CleanSwapChain();
 	~VulkanRenderer();
 public:
 	VulkanRenderer();
