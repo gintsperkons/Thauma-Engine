@@ -34,6 +34,9 @@ class VulkanRenderer : public BaseRenderer
 	VkCommandPool m_commandPool;
 	std::vector < VkCommandBuffer> m_commandBuffers;
 
+	VkBuffer m_vertexBuffer;
+	VkDeviceMemory m_vertexBufferMemory;
+
 	VkQueue m_graphicsQueue;
 	VkQueue m_presentQueue;
 	std::vector<VkSemaphore> m_imageAvailableSemaphore;
@@ -60,6 +63,7 @@ private:
 	void CreateImageViews();
 	void CreateRenderPass();
 	void CreateGraphicsPipeline();
+	void CreateVertexBuffer();
 	void CreateFrameBuffers();
 	void CreateCommandPool();
 	void CreateCommandBuffers();
@@ -73,6 +77,7 @@ private:
 	//Getter Functions
 	std::vector<const char*>GetInstanceExtensions();
 	//SupportCreationAndDestruction Functions
+	uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 	void RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 	u32 RateDeviceSuitability(VkPhysicalDevice device);
 	VulkanDefines::QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);

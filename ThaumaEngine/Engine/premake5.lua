@@ -11,6 +11,7 @@ project "ThaumaEngineLib"
     {
         "src",
         "%{IncludeDir.GLFW}",
+        "%{IncludeDir.GLM}",
 		"%{IncludeDir.VulkanSDK}"
     }
 

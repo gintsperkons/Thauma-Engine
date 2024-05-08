@@ -162,6 +162,8 @@ VkShaderModule VulkanHelpers::CreateShaderModule(VkDevice device, const std::vec
 	return shaderModule;
 }
 
+
+
 std::vector<char> VulkanHelpers::ReadFileSPV(const std::string &filename)
 {
 	std::ifstream file(filename,std::ios::ate | std::ios::binary);
