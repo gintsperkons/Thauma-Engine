@@ -33,6 +33,7 @@ class VulkanRenderer : public BaseRenderer
 	std::vector<VkFramebuffer> m_swapChainFramebuffers;
 	VkCommandPool m_commandPool;
 	std::vector < VkCommandBuffer> m_commandBuffers;
+	uint32_t m_imageIndex = -1;
 
 	VkBuffer m_vertexBuffer;
 	VkDeviceMemory m_vertexBufferMemory;
@@ -77,8 +78,8 @@ private:
 	//Getter Functions
 	std::vector<const char*>GetInstanceExtensions();
 	//SupportCreationAndDestruction Functions
-	uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
-	void RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+	void StartCommandBufferRecording(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+	void FinishCommandBufferRecording(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 	u32 RateDeviceSuitability(VkPhysicalDevice device);
 	VulkanDefines::QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
 	VulkanDefines::SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device);
@@ -95,11 +96,16 @@ private:
 		const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
 		void* pUserData);
 
+
+
+
 	void CleanSwapChain();
 	~VulkanRenderer();
 public:
 	VulkanRenderer();
 	int Init(GLFWwindow* window);
+	void StartRendering();
+	void FinishRendering();
 	void Draw();
 	void Update();
 	void Destroy();

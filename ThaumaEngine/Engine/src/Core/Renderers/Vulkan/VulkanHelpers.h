@@ -14,5 +14,6 @@ VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>
 VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> &availablePresentModes);
 VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities, GLFWwindow &window);
 VkShaderModule CreateShaderModule(VkDevice device, const std::vector<char> &code);
+uint32_t FindMemoryType(VkPhysicalDevice pDevice,uint32_t typeFilter, VkMemoryPropertyFlags properties);
 std::vector<char> ReadFileSPV(const std::string &filename);
 }

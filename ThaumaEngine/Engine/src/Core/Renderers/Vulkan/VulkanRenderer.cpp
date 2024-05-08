@@ -473,9 +473,9 @@ void VulkanRenderer::CreateVertexBuffer()
 	VkMemoryAllocateInfo allocInfo{};
 	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 	allocInfo.allocationSize = memRequirements.size;
-	allocInfo.memoryTypeIndex = FindMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+	allocInfo.memoryTypeIndex = VulkanHelpers::FindMemoryType(m_pDevice,memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-	if (vkAllocateMemory(m_lDevice, &allocInfo, nullptr, &m_vertexBufferMemory) != VK_SUCCESS) {
+	if (vkAllocateMemory(m_lDevice , &allocInfo, nullptr, &m_vertexBufferMemory) != VK_SUCCESS) {
 		throw std::runtime_error("failed to allocate vertex buffer memory!");
 	}
 
@@ -585,20 +585,8 @@ void VulkanRenderer::RecreateSwapChain()
 
 }
 
-uint32_t VulkanRenderer::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
-{
-	VkPhysicalDeviceMemoryProperties memProperties;
-	vkGetPhysicalDeviceMemoryProperties(m_pDevice, &memProperties);
-	for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
-		if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
-			return i;
-		}
-	}
 
-	throw std::runtime_error("failed to find suitable memory type!");
-}
-
-void VulkanRenderer::RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex)
+void VulkanRenderer::StartCommandBufferRecording(VkCommandBuffer commandBuffer, uint32_t imageIndex)
 {
 	VkCommandBufferBeginInfo beginInfo{};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -640,18 +628,19 @@ void VulkanRenderer::RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t
 	scissor.extent = m_swapChainExtent;
 	vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 
-	VkBuffer vertexBuffers[] = { m_vertexBuffer };
-	VkDeviceSize offsets[] = { 0 };
-	vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
-	vkCmdDraw(commandBuffer, static_cast<uint32_t>(MeshStructures::vertices.size()), 1, 0, 0);
+}
+
+void VulkanRenderer::FinishCommandBufferRecording(VkCommandBuffer commandBuffer, uint32_t imageIndex)
+{
 	vkCmdEndRenderPass(commandBuffer);
 
 	if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
 		throw std::runtime_error("failed to record command buffer!");
 	}
-
 }
+
+
 
 std::vector<const char *> VulkanRenderer::GetInstanceExtensions()
 {
@@ -879,14 +868,12 @@ int VulkanRenderer::Init(GLFWwindow *window)
 	return 0;
 }
 
-void VulkanRenderer::Draw()
+void VulkanRenderer::StartRendering()
 {
 	vkWaitForFences(m_lDevice, 1, &m_inFlightFence[m_currentFrame], VK_TRUE, UINT64_MAX);
-	uint32_t imageIndex;
+	VkResult result = vkAcquireNextImageKHR(m_lDevice, m_swapChain, UINT64_MAX, m_imageAvailableSemaphore[m_currentFrame], VK_NULL_HANDLE, &m_imageIndex);
 
 
-	VkResult result = vkAcquireNextImageKHR(m_lDevice, m_swapChain, UINT64_MAX, m_imageAvailableSemaphore[m_currentFrame], VK_NULL_HANDLE, &imageIndex);
-	
 	if (result == VK_ERROR_OUT_OF_DATE_KHR)
 	{
 		RecreateSwapChain();
@@ -898,7 +885,13 @@ void VulkanRenderer::Draw()
 
 	vkResetFences(m_lDevice, 1, &m_inFlightFence[m_currentFrame]);
 	vkResetCommandBuffer(m_commandBuffers[m_currentFrame], 0);
-	RecordCommandBuffer(m_commandBuffers[m_currentFrame], imageIndex);
+	StartCommandBufferRecording(m_commandBuffers[m_currentFrame], m_imageIndex);
+}
+
+void VulkanRenderer::FinishRendering()
+{
+
+	FinishCommandBufferRecording(m_commandBuffers[m_currentFrame], m_imageIndex);
 
 	VkSubmitInfo submitInfo{};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -919,7 +912,7 @@ void VulkanRenderer::Draw()
 		throw std::runtime_error("failed to submit draw command buffer!");
 	}
 
-	
+
 	VkPresentInfoKHR presentInfo{};
 	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 
@@ -929,9 +922,9 @@ void VulkanRenderer::Draw()
 	VkSwapchainKHR swapChains[] = { m_swapChain };
 	presentInfo.swapchainCount = 1;
 	presentInfo.pSwapchains = swapChains;
-	presentInfo.pImageIndices = &imageIndex;
+	presentInfo.pImageIndices = &m_imageIndex;
 	presentInfo.pResults = nullptr; // Optional
-	result = vkQueuePresentKHR(m_presentQueue, &presentInfo);
+	VkResult result = vkQueuePresentKHR(m_presentQueue, &presentInfo);
 
 	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_frameBufferResized) {
 		m_frameBufferResized = false;
@@ -944,6 +937,16 @@ void VulkanRenderer::Draw()
 
 
 	m_currentFrame = (m_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+
+}
+
+void VulkanRenderer::Draw()
+{
+	VkBuffer vertexBuffers[] = { m_vertexBuffer };
+	VkDeviceSize offsets[] = { 0 };
+	vkCmdBindVertexBuffers(m_commandBuffers[m_currentFrame], 0, 1, vertexBuffers, offsets);
+
+	vkCmdDraw(m_commandBuffers[m_currentFrame], static_cast<uint32_t>(MeshStructures::vertices.size()), 1, 0, 0);
 }
 
 void VulkanRenderer::Update()

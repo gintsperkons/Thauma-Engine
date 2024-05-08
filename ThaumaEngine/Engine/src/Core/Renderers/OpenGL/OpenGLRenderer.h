@@ -10,6 +10,8 @@ class OpenGLRenderer : public BaseRenderer
 public:
 	OpenGLRenderer();
 	int Init(GLFWwindow* window);
+	void StartRendering();
+	void FinishRendering();
 	void Draw();
 	void Update();
 	void Destroy();

@@ -10,6 +10,8 @@ class Renderer {
 	void Destroy();
 public:
 	void Init(int renderType, GLFWwindow* window);
+	void StartRendering();
+	void FinishRendering();
 	void Draw();
 	void Update();
 	void Complete();

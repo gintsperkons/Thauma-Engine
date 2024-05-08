@@ -13,6 +13,14 @@ int OpenGLRenderer::Init(GLFWwindow* window)
 	return 0;
 }
 
+void OpenGLRenderer::StartRendering()
+{
+}
+
+void OpenGLRenderer::FinishRendering()
+{
+}
+
 void OpenGLRenderer::Draw()
 {
 }

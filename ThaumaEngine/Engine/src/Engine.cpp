@@ -32,6 +32,7 @@ int ThaumaEngine::Init()
 	window->Init();
 	renderer = new Renderer();
 	renderer->Init(Renderer::Type::Vulkan,window->GetWindow());
+	//create triangle
 	return 0;
 }
 
@@ -39,9 +40,15 @@ int ThaumaEngine::Run()
 {
 	while (!window->ShouldClose())
 	{
+
 		window->Update();
 		renderer->Update();
+		renderer->StartRendering();
+		// //draw triangle
+		//render finish
+		
 		renderer->Draw();
+		renderer->FinishRendering();
 		MemoryManager::LogAllocations();
 	}
 	
@@ -50,6 +57,7 @@ int ThaumaEngine::Run()
 
 int ThaumaEngine::Terminate()
 {
+	//destroy triangle
 	renderer->Complete();
 	delete renderer;
 	delete window;
