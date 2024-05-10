@@ -8,7 +8,7 @@ pushd ..
 echo Cleaning Up Generated Files
 call !directory!Python\python.exe !%~dp0!Clean.py
 
-if %~1==all (
+if "%~1"=="all" (
     echo Cleaning Up Downloads
     rmdir /s /q !directory!
 )
