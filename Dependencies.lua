@@ -1,3 +1,4 @@
+local os = require("os")
 VULKAN_SDK = os.getenv("VULKAN_SDK")
 
 IncludeDir = {}
@@ -10,4 +11,4 @@ LibraryDir["VulkanSDK"] = "%{VULKAN_SDK}/Lib"
 
 Library = {} 
 
-Library["Vulkan"] = "%{LibraryDir.VulkanSDK}/vulkan-1.lib"
+Library["Vulkan"] = "%{LibraryDir.VulkanSDK}/vulkan-1"
