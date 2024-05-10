@@ -30,7 +30,10 @@ if "%output%"=="2" (
     del "!directory!python.zip"
 )
 
-call "!directory!python.exe" "!%~dp0!Setup.py"
+
+
+call "!directory!python.exe" "!%~dp0!Setup.py" "%~1" "%~2"
+
 
 if  "%~1"=="vs2022" (
     if "%~2"=="open" (

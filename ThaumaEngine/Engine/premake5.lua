@@ -1,11 +1,11 @@
 project "ThaumaEngineLib"
     kind "SharedLib"
     language "C++"
-    targetdir "Binaries/%{cfg.buildcfg}"
+    targetdir "Binaries\\%{cfg.buildcfg}"
     cppdialect "C++20"
 
 
-    files {"src/**.h", "src/**.cpp"}
+    files {"src\\**.h", "src\\**.cpp"}
 
     includedirs
     {
@@ -21,22 +21,22 @@ project "ThaumaEngineLib"
         "%{Library.Vulkan}"
     }
 
-    targetdir ("%{wks.location}/Binaries/" .. OutputDir .. "/%{prj.name}")
-    objdir ("%{wks.location}/Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")
-    debugdir("%{wks.location}/Binaries/" .. OutputDir .. "/%{prj.name}")
+    targetdir ("%{wks.location}\\Binaries\\" .. OutputDir .. "\\%{prj.name}")
+    objdir ("%{wks.location}\\Binaries\\Intermediates\\" .. OutputDir .. "\\%{prj.name}")
+    debugdir("%{wks.location}\\Binaries\\" .. OutputDir .. "\\%{prj.name}")
 
 prebuildcommands
 {
-        "%{prj.location}/Shaders/CompileShaders.bat"
+        "%{prj.location}\\Shaders\\CompileShaders.bat"
 }
 
     postbuildcommands
     {   
         "{ECHO} %{prj.location}",
-        "{mkdir} %{wks.location}/Binaries/" .. OutputDir .. "/TestBed/",
-        "{COPYFILE} %{cfg.buildtarget.relpath} %{wks.location}/Binaries/" .. OutputDir .. "/TestBed/",
-        "{mkdir} %{wks.location}/Binaries/" .. OutputDir .. "/TestBed/Shaders/",
-        "{COPYDIR} %{prj.location}/Shaders %{wks.location}/Binaries/" .. OutputDir .. "/TestBed/Shaders/"
+        "{mkdir} %{wks.location}\\Binaries\\" .. OutputDir .. "\\TestBed\\",
+        "{COPYFILE} %{cfg.buildtarget.relpath} %{wks.location}\\Binaries\\" .. OutputDir .. "\\TestBed\\",
+        "{mkdir} %{wks.location}\\Binaries\\" .. OutputDir .. "\\TestBed\\Shaders\\",
+        "{COPYDIR} %{prj.location}\\Shaders %{wks.location}\\Binaries\\" .. OutputDir .. "\\TestBed\\Shaders\\"
     }
 
     filter "system:windows"

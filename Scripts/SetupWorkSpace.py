@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.join(current_dir))
 import Defines
 import Utils
 
-def SetupPremake():
+def SetupPremake(environment = "vs2022"):
     url = "https://github.com/premake/premake-core/releases/download/v5.0.0-beta2/premake-5.0.0-beta2-windows.zip"
     location = Defines.projectPath +"\\" + Defines.externalItemsPath + "Premake\\"
     if os.path.exists(location+"premake5.exe"):
@@ -21,7 +21,7 @@ def SetupPremake():
         shutil.move(location+"Temp\\premake5.exe",location+"\\premake5.exe")
         shutil.rmtree(location+"Temp\\")
         print("Premake setup complete")
-    os.system(f"{location+'premake5.exe'} vs2022")
+    os.system(f"{location+'premake5.exe'} {environment}")
 
 
 if __name__ == '__main__':
