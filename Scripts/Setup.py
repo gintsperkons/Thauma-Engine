@@ -12,6 +12,19 @@ task = args[1]
 environment = args[2]
 
 
+
+
+
+if task == "SetupPython":
+    import ValidatePythonPackages
+    print("Validating Python Packages")
+    ValidatePythonPackages.ValidatePythonPackages()
+
+if task == "SetupPremake":
+    import SetupWorkSpace
+    print("Setting up workspace")
+    SetupWorkSpace.SetupPremake(environment)
+
 if task == "VulkanSDKSetup":
     vulkanInstallerUrl = "https://sdk.lunarg.com/sdk/download/1.3.280.0/windows/VulkanSDK-1.3.280.0-Installer.exe"
     vulkanPath = os.environ["VULKAN_SDK"]
@@ -23,14 +36,3 @@ if task == "VulkanSDKSetup":
             Utils.checkDirectory(Defines.TempPath)
             os.system(f'powershell.exe -Command "Invoke-WebRequest -Uri {  vulkanInstallerUrl } -OutFile { Defines.TempPath }/vulkanSDKinstaller.exe"')
             os.system(f".\\{Defines.TempPath}\\vulkanSDKinstaller.exe")
-
-
-if task == "SetupPython":
-    import ValidatePythonPackages
-    print("Validating Python Packages")
-    ValidatePythonPackages.ValidatePythonPackages()
-if task == "SetupPremake":
-    import SetupWorkSpace
-    print("Setting up workspace")
-    SetupWorkSpace.SetupPremake(environment)
-
