@@ -3,12 +3,14 @@
 #include "Core/Logger.h"
 #include "MeshStructures.h"
 #include "VulkanHelpers.h"
+#include "Buffers.h"
 #include <stdexcept>
 #include <iostream>
 #include <stdio.h>
 #include <map>
 #include <set>
 #include <Core/Window/Window.h>
+
 
 void VulkanRenderer::CreateInstance()
 {
@@ -455,39 +457,6 @@ void VulkanRenderer::CreateGraphicsPipeline()
 	vkDestroyShaderModule(m_lDevice, vertShaderModule, nullptr);
 }
 
-void VulkanRenderer::CreateVertexBuffer()
-{
-	VkBufferCreateInfo bufferInfo{};
-	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-	bufferInfo.size = sizeof(MeshStructures::vertices[0]) * MeshStructures::vertices.size();
-	bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-
-	if (vkCreateBuffer(m_lDevice, &bufferInfo, nullptr, &m_vertexBuffer) != VK_SUCCESS) {
-		throw std::runtime_error("failed to create vertex buffer!");
-	}
-
-	VkMemoryRequirements memRequirements;
-	vkGetBufferMemoryRequirements(m_lDevice, m_vertexBuffer, &memRequirements);
-
-	VkMemoryAllocateInfo allocInfo{};
-	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-	allocInfo.allocationSize = memRequirements.size;
-	allocInfo.memoryTypeIndex = VulkanHelpers::FindMemoryType(m_pDevice,memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-
-	if (vkAllocateMemory(m_lDevice , &allocInfo, nullptr, &m_vertexBufferMemory) != VK_SUCCESS) {
-		throw std::runtime_error("failed to allocate vertex buffer memory!");
-	}
-
-	vkBindBufferMemory(m_lDevice, m_vertexBuffer, m_vertexBufferMemory, 0);
-
-
-	void* data;
-	vkMapMemory(m_lDevice, m_vertexBufferMemory, 0, bufferInfo.size, 0, &data);
-	memcpy(data, MeshStructures::vertices.data(), (size_t)bufferInfo.size);
-	vkUnmapMemory(m_lDevice, m_vertexBufferMemory);
-}
-
 void VulkanRenderer::CreateFrameBuffers()
 {
 	m_swapChainFramebuffers.resize(m_swapChainImageViews.size());
@@ -860,7 +829,8 @@ int VulkanRenderer::Init(GLFWwindow *window)
 	CreateGraphicsPipeline();
 	CreateFrameBuffers();
 	CreateCommandPool();
-	CreateVertexBuffer();
+	std::vector<MeshStructures::Vertex> verticies = MeshStructures::vertices;
+	CreateVertexBuffer(&verticies,&m_vertexBuffer,&m_vertexBufferMemory,m_lDevice,m_pDevice);
 	CreateCommandBuffers();
 	CreateSyncObject();
 

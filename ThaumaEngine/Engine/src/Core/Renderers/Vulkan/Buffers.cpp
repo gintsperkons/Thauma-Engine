@@ -1,14 +1,13 @@
-#include "VertexBuffer.h"
+#include "Buffers.h"
 #include "VulkanHelpers.h"
-#include "MeshStructures.h"
 #include <stdexcept>
 
-void CreateVertexBuffer(std::vector<Vertex>* vertecies,VkBuffer* vertexBuffer, VkDeviceMemory* vertexBufferMemory,VkDevice lDevice, VkPhysicalDevice pDevice)
+void CreateVertexBuffer(std::vector<MeshStructures::Vertex>* vertecies,VkBuffer* vertexBuffer, VkDeviceMemory* vertexBufferMemory,VkDevice lDevice, VkPhysicalDevice pDevice)
 {
 
 	VkBufferCreateInfo bufferInfo{};
 	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-	bufferInfo.size = sizeof(MeshStructures::vertices[0]) * MeshStructures::vertices.size();
+	bufferInfo.size = sizeof(vertecies[0]) * vertecies->size();
 	bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
 	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
@@ -33,6 +32,6 @@ void CreateVertexBuffer(std::vector<Vertex>* vertecies,VkBuffer* vertexBuffer, V
 
 	void* data;
 	vkMapMemory(lDevice, *vertexBufferMemory, 0, bufferInfo.size, 0, &data);
-	memcpy(data, MeshStructures::vertices.data(), (size_t)bufferInfo.size);
+	memcpy(data, vertecies->data(), (size_t)bufferInfo.size);
 	vkUnmapMemory(lDevice, *vertexBufferMemory);
 }

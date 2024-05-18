@@ -64,7 +64,6 @@ private:
 	void CreateImageViews();
 	void CreateRenderPass();
 	void CreateGraphicsPipeline();
-	void CreateVertexBuffer();
 	void CreateFrameBuffers();
 	void CreateCommandPool();
 	void CreateCommandBuffers();
