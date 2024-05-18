@@ -830,7 +830,7 @@ int VulkanRenderer::Init(GLFWwindow *window)
 	CreateFrameBuffers();
 	CreateCommandPool();
 	std::vector<MeshStructures::Vertex> verticies = MeshStructures::vertices;
-	CreateVertexBuffer(&verticies,&m_vertexBuffer,&m_vertexBufferMemory,m_lDevice,m_pDevice);
+	CreateVertexBuffer(verticies,m_vertexBuffer,m_vertexBufferMemory,m_lDevice,m_pDevice);
 	CreateCommandBuffers();
 	CreateSyncObject();
 
