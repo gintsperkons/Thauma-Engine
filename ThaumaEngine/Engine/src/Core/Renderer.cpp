@@ -12,7 +12,7 @@ void Renderer::Init(int renderType,GLFWwindow* window)
 	switch (renderType)
 	{
 	case Type::Vulkan:
-		currentRenderer = new VulkanRenderer();
+		currentRenderer = new ThaumaEngine::VulkanRenderer();
 		currentRenderer->Init(window);
 		currentRendererID = Type::Vulkan;
 		break;

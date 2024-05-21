@@ -9,197 +9,201 @@
 #include <algorithm>
 #include <cstring>
 
+namespace ThaumaEngine {
 
 
 
-b8 VulkanHelpers::CheckInstanceExtensionSupport(std::vector<const char *> checkExtensions)
-{
-	uint32_t extensionCount = 0;
-	vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
-
-	std::vector<VkExtensionProperties> extensions(extensionCount);
-	vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
 
 
-
-	for (const auto &checkExtension : checkExtensions)
+	b8 VulkanHelpers::CheckInstanceExtensionSupport(std::vector<const char*> checkExtensions)
 	{
-		b8 hasExtension = false;
-		for (const auto &extension : extensions)
+		uint32_t extensionCount = 0;
+		vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
+
+		std::vector<VkExtensionProperties> extensions(extensionCount);
+		vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
+
+
+
+		for (const auto& checkExtension : checkExtensions)
 		{
-			if (strcmp(checkExtension, extension.extensionName))
+			b8 hasExtension = false;
+			for (const auto& extension : extensions)
 			{
-				hasExtension = true;
-				break;
+				if (strcmp(checkExtension, extension.extensionName))
+				{
+					hasExtension = true;
+					break;
+				}
+
 			}
-
-		}
-		if (!hasExtension)
-		{
-			printf("Not found extension: %s\n", checkExtension);
-			return false;
-		}
-	}
-	return true;
-
-}
-
-b8 VulkanHelpers::CheckValidationLayerSupport()
-{
-	uint32_t layerCount;
-	vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
-
-	std::vector<VkLayerProperties> layers = std::vector<VkLayerProperties>(layerCount);
-	vkEnumerateInstanceLayerProperties(&layerCount, layers.data());
-
-	for (const char *layerName : VulkanDefines::ValidationLayers)
-	{
-		b8 layerFound = false;
-
-		for (const auto &layerProperties : layers)
-		{
-			if (strcmp(layerName, layerProperties.layerName) == 0)
+			if (!hasExtension)
 			{
-				layerFound = true;
-				break;
+				printf("Not found extension: %s\n", checkExtension);
+				return false;
 			}
 		}
+		return true;
 
-		if (!layerFound)
+	}
+
+	b8 VulkanHelpers::CheckValidationLayerSupport()
+	{
+		uint32_t layerCount;
+		vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+
+		std::vector<VkLayerProperties> layers = std::vector<VkLayerProperties>(layerCount);
+		vkEnumerateInstanceLayerProperties(&layerCount, layers.data());
+
+		for (const char* layerName : VulkanDefines::ValidationLayers)
 		{
+			b8 layerFound = false;
 
-			printf("Not found layer: %s\n", layerName);
-			return false;
+			for (const auto& layerProperties : layers)
+			{
+				if (strcmp(layerName, layerProperties.layerName) == 0)
+				{
+					layerFound = true;
+					break;
+				}
+			}
+
+			if (!layerFound)
+			{
+
+				printf("Not found layer: %s\n", layerName);
+				return false;
+			}
 		}
+
+
+
+
+		return true;
 	}
 
 
 
-
-	return true;
-}
-
-
-
-b8 VulkanHelpers::CheckDeviceExtensionSupport(VkPhysicalDevice device)
-{
-	uint32_t extensionCount;
-	vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
-
-	std::vector<VkExtensionProperties> availableExtensions(extensionCount);
-	vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
-
-	std::set<std::string> requiredExtensions(VulkanDefines::DeviceExtensions.begin(), 
-											 VulkanDefines::DeviceExtensions.end());
-
-	for (const auto &extension : availableExtensions)
+	b8 VulkanHelpers::CheckDeviceExtensionSupport(VkPhysicalDevice device)
 	{
-		requiredExtensions.erase(extension.extensionName);
-	}
+		uint32_t extensionCount;
+		vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
 
+		std::vector<VkExtensionProperties> availableExtensions(extensionCount);
+		vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
 
-	return requiredExtensions.empty();
-}
+		std::set<std::string> requiredExtensions(VulkanDefines::DeviceExtensions.begin(),
+			VulkanDefines::DeviceExtensions.end());
 
-VkSurfaceFormatKHR VulkanHelpers::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &availableFormats)
-{
-	for (const auto &availableFormat : availableFormats)
-	{
-		if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB && availableFormat.colorSpace == VK_COLORSPACE_SRGB_NONLINEAR_KHR)
+		for (const auto& extension : availableExtensions)
 		{
-			return availableFormat;
+			requiredExtensions.erase(extension.extensionName);
 		}
-	}
-	return availableFormats[0];
-}
 
-VkPresentModeKHR VulkanHelpers::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> &availablePresentModes)
-{
-	for (const auto& availablePresentMode: availablePresentModes)
+
+		return requiredExtensions.empty();
+	}
+
+	VkSurfaceFormatKHR VulkanHelpers::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
 	{
-		if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR)
+		for (const auto& availableFormat : availableFormats)
 		{
-			return availablePresentMode;
+			if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB && availableFormat.colorSpace == VK_COLORSPACE_SRGB_NONLINEAR_KHR)
+			{
+				return availableFormat;
+			}
 		}
+		return availableFormats[0];
 	}
-	return VK_PRESENT_MODE_FIFO_KHR;
-}
 
-VkExtent2D VulkanHelpers::ChooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities, GLFWwindow &window)
-{
-	if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max())
+	VkPresentModeKHR VulkanHelpers::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes)
 	{
-		return capabilities.currentExtent;
+		for (const auto& availablePresentMode : availablePresentModes)
+		{
+			if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR)
+			{
+				return availablePresentMode;
+			}
+		}
+		return VK_PRESENT_MODE_FIFO_KHR;
 	}
-	else
+
+	VkExtent2D VulkanHelpers::ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities, GLFWwindow& window)
 	{
-		int width, height;
-		glfwGetFramebufferSize(&window,&width, &height);
+		if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max())
+		{
+			return capabilities.currentExtent;
+		}
+		else
+		{
+			int width, height;
+			glfwGetFramebufferSize(&window, &width, &height);
 
-		VkExtent2D actualExtent = {
-			static_cast<uint32_t>(width),
-			static_cast<uint32_t>(height)
-		};
+			VkExtent2D actualExtent = {
+				static_cast<uint32_t>(width),
+				static_cast<uint32_t>(height)
+			};
 
-		actualExtent.width = std::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
-		actualExtent.height = std::clamp(actualExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
-		
-		return actualExtent;
-	}
-}
+			actualExtent.width = std::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
+			actualExtent.height = std::clamp(actualExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
 
-VkShaderModule VulkanHelpers::CreateShaderModule(VkDevice device, const std::vector<char> &code)
-{
-	VkShaderModuleCreateInfo createInfo{};
-	createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-	createInfo.codeSize = code.size();
-	createInfo.pCode = reinterpret_cast<const uint32_t *>(code.data());
-
-	VkShaderModule shaderModule;
-	if (vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to create shader module!");
-	}
-	return shaderModule;
-}
-
-
-uint32_t VulkanHelpers::FindMemoryType(VkPhysicalDevice pDevice,uint32_t typeFilter, VkMemoryPropertyFlags properties)
-{
-	VkPhysicalDeviceMemoryProperties memProperties;
-	vkGetPhysicalDeviceMemoryProperties(pDevice, &memProperties);
-	for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
-		if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
-			return i;
+			return actualExtent;
 		}
 	}
 
-	throw std::runtime_error("failed to find suitable memory type!");
-}
-
-
-std::vector<char> VulkanHelpers::ReadFileSPV(const std::string &filename)
-{
-	std::ifstream file(filename,std::ios::ate | std::ios::binary);
-
-	std::filesystem::path p = filename;
-	std::cout << "Current path is " << std::filesystem::current_path() << '\n';
-	std::cout << "Absolute path for " << p << " is " << std::filesystem::absolute(p) << '\n';
-
-	if (!file.is_open())
+	VkShaderModule VulkanHelpers::CreateShaderModule(VkDevice device, const std::vector<char>& code)
 	{
-		throw std::runtime_error("failed to open file!");
+		VkShaderModuleCreateInfo createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+		createInfo.codeSize = code.size();
+		createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
+
+		VkShaderModule shaderModule;
+		if (vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS)
+		{
+			throw std::runtime_error("failed to create shader module!");
+		}
+		return shaderModule;
 	}
 
-	size_t fileSize = (size_t)file.tellg();
-	std::vector<char> buffer(fileSize);
 
-	file.seekg(0);
-	file.read(buffer.data(), fileSize);
+	uint32_t VulkanHelpers::FindMemoryType(VkPhysicalDevice pDevice, uint32_t typeFilter, VkMemoryPropertyFlags properties)
+	{
+		VkPhysicalDeviceMemoryProperties memProperties;
+		vkGetPhysicalDeviceMemoryProperties(pDevice, &memProperties);
+		for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
+			if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
+				return i;
+			}
+		}
 
-	file.close();
-	return buffer;
+		throw std::runtime_error("failed to find suitable memory type!");
+	}
 
 
-	return std::vector<char>();
+	std::vector<char> VulkanHelpers::ReadFileSPV(const std::string& filename)
+	{
+		std::ifstream file(filename, std::ios::ate | std::ios::binary);
+
+		std::filesystem::path p = filename;
+		std::cout << "Current path is " << std::filesystem::current_path() << '\n';
+		std::cout << "Absolute path for " << p << " is " << std::filesystem::absolute(p) << '\n';
+
+		if (!file.is_open())
+		{
+			throw std::runtime_error("failed to open file!");
+		}
+
+		size_t fileSize = (size_t)file.tellg();
+		std::vector<char> buffer(fileSize);
+
+		file.seekg(0);
+		file.read(buffer.data(), fileSize);
+
+		file.close();
+		return buffer;
+
+
+		return std::vector<char>();
+	}
 }
