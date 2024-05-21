@@ -9,23 +9,24 @@
 
 
 namespace ThaumaEngine {
+	static VkDeviceManager* m_instance;
 	VkDeviceManager::VkDeviceManager()
 	{
-	
+
 	}
 
-	VkDeviceManager VkDeviceManager::GetInstance()
+	VkDeviceManager* VkDeviceManager::GetInstance()
 	{
 		if (m_instance == nullptr)
 		{
 			m_instance = new VkDeviceManager();
 		}
-		return VkDeviceManager();
+		return m_instance;
 	}
 
-	void VkDeviceManager::Init(GLFWwindow &window)
+	void VkDeviceManager::Init(GLFWwindow* window)
 	{
-		m_window = &window;
+		m_window = window;
 		CreateInstance();
 		SetupDebugMessanger();
 		CreateSurface();
@@ -35,6 +36,11 @@ namespace ThaumaEngine {
 
 	VkDeviceManager::~VkDeviceManager()
 	{
+		vkDestroySurfaceKHR(m_vInstance, m_vSurface, nullptr);
+		vkDestroyDevice(m_lDevice, nullptr);
+		if (VulkanDefines::enableValidationLayers)
+			DestroyDebugUtilsMessangerEXT(m_vInstance, m_debugMessenger, nullptr);
+		vkDestroyInstance(m_vInstance, nullptr);
 	}
 
 	void VkDeviceManager::CreateInstance()
@@ -393,6 +399,8 @@ namespace ThaumaEngine {
 		return details;
 	}
 
+
+
 	VkResult VkDeviceManager::CreateDebugUtilsMessangerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
 		const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessanger)
 	{
@@ -430,6 +438,52 @@ namespace ThaumaEngine {
 		}
 
 		return indices;
+	}
+	void VkDeviceManager::DestroyDebugUtilsMessangerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator)
+	{
+		auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
+		if (func != nullptr)
+			return func(instance, debugMessenger, pAllocator);
+	}
+
+	VulkanDefines::QueueFamilyIndices VkDeviceManager::FindQueueFamilies()
+	{
+		return FindQueueFamilies(m_pDevice);
+	}
+
+	VulkanDefines::SwapChainSupportDetails VkDeviceManager::QuerySwapChainSupport()
+	{
+		return QuerySwapChainSupport(m_pDevice);
+	}
+
+	VkSurfaceKHR VkDeviceManager::GetSurface()
+	{
+		return m_vSurface;
+	}
+
+	VkInstance VkDeviceManager::GetVulkanInstance()
+	{
+		return VkInstance();
+	}
+
+	VkDevice VkDeviceManager::GetLogicalDevice()
+	{
+		return m_lDevice;
+	}
+
+	VkPhysicalDevice VkDeviceManager::GetPhysicalDevice()
+	{
+		return m_pDevice;
+	}
+
+	VkQueue VkDeviceManager::GetGraphicsQueue()
+	{
+		return m_graphicsQueue;
+	}
+
+	VkQueue VkDeviceManager::GetPresentaionQueue()
+	{
+		return m_presentQueue;
 	}
 
 }

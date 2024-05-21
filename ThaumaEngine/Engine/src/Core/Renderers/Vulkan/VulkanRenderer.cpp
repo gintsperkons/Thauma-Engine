@@ -1,5 +1,5 @@
 #include "VulkanRenderer.h"
-
+#include "VkDeviceManager.h"
 #include "Core/Logger.h"
 #include "MeshStructures.h"
 #include "VulkanHelpers.h"
@@ -13,163 +13,10 @@
 
 namespace ThaumaEngine {
 
-	void VulkanRenderer::CreateInstance()
-	{
-		if (enableValidationLayers && !VulkanHelpers::CheckValidationLayerSupport())
-		{
-			throw std::runtime_error("validation layers requested, but not available!");
-		}
-
-		VkApplicationInfo appInfo{};
-		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-		appInfo.pApplicationName = "TestsAppLication";
-		appInfo.applicationVersion = VK_MAKE_VERSION(0, 0, 1);
-		appInfo.pEngineName = "Thauma Engine";
-		appInfo.engineVersion = VK_MAKE_VERSION(0, 0, 1);
-		appInfo.apiVersion = VK_API_VERSION_1_3;
-
-		std::vector<const char*> instanceExtensions = GetInstanceExtensions();
-
-
-		VkInstanceCreateInfo createInfo{};
-		createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-		createInfo.pApplicationInfo = &appInfo;
-		createInfo.ppEnabledExtensionNames = instanceExtensions.data();
-		createInfo.enabledExtensionCount = static_cast<uint32_t>(instanceExtensions.size());
-
-		VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
-		if (enableValidationLayers)
-		{
-			createInfo.enabledLayerCount = static_cast<uint32_t>(VulkanDefines::ValidationLayers.size());
-			createInfo.ppEnabledLayerNames = VulkanDefines::ValidationLayers.data();
-
-			PopulateDebugMessengerCreateInfo(debugCreateInfo);
-			createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&debugCreateInfo;
-		}
-		else
-		{
-			createInfo.enabledLayerCount = 0;
-
-			createInfo.pNext = nullptr;
-		}
-
-
-
-		if (vkCreateInstance(&createInfo, nullptr, &vInstance))
-			throw std::runtime_error("Failed to create instance!");
-
-
-	}
-
-	void VulkanRenderer::SetupDebugMessanger()
-	{
-		if (!enableValidationLayers) return;
-
-		VkDebugUtilsMessengerCreateInfoEXT createInfo{};
-		createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-		createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
-			VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
-			VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-		createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
-			VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
-			VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-		createInfo.pfnUserCallback = DebugCallback;
-		createInfo.pUserData = nullptr;
-
-		if (CreateDebugUtilsMessangerEXT(vInstance, &createInfo, nullptr, &debugMessenger) != VK_SUCCESS)
-			throw std::runtime_error("Failed to set up debug messenger!");
-	}
-
-	void VulkanRenderer::SelectPhysicalDevice()
-	{
-		uint32_t deviceCount = 0;
-		vkEnumeratePhysicalDevices(vInstance, &deviceCount, nullptr);
-		if (deviceCount == 0)
-			throw std::runtime_error("Failed to find GPUs with Vulkan support!");
-
-		std::vector<VkPhysicalDevice> devices(deviceCount);
-		vkEnumeratePhysicalDevices(vInstance, &deviceCount, devices.data());
-
-		std::multimap<int, VkPhysicalDevice> candidates;
-
-		for (const auto& device : devices)
-		{
-			int score = RateDeviceSuitability(device);
-			candidates.insert(std::make_pair(score, device));
-		}
-
-		// Check if the best candidate is suitable at all
-		if (candidates.rbegin()->first > 0)
-		{
-			m_pDevice = candidates.rbegin()->second;
-			VkPhysicalDeviceProperties deviceProperties;
-			vkGetPhysicalDeviceProperties(m_pDevice, &deviceProperties);
-			printf("Selected GPU: %s\n", deviceProperties.deviceName);
-		}
-		else
-		{
-			throw std::runtime_error("failed to find a suitable GPU!");
-		}
-	}
-
-
-	void VulkanRenderer::CreateLogicalDevice()
-	{
-		VulkanDefines::QueueFamilyIndices indices = FindQueueFamilies(m_pDevice);
-
-		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-		std::set<uint32_t> uniqueQueueFamilies = { indices.graphicsFamily.value(), indices.presentFamily.value() };
-
-		float queuePriority = 1.0f;
-
-		for (uint32_t queueFamily : uniqueQueueFamilies)
-		{
-			VkDeviceQueueCreateInfo queueCreateInfo{};
-			queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-			queueCreateInfo.queueFamilyIndex = queueFamily;
-			queueCreateInfo.queueCount = 1;
-			queueCreateInfo.pQueuePriorities = &queuePriority;
-			queueCreateInfos.push_back(queueCreateInfo);
-		}
-
-		VkPhysicalDeviceFeatures deviceFeatures{};
-
-		VkDeviceCreateInfo createInfo{};
-		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-		createInfo.pQueueCreateInfos = queueCreateInfos.data();
-		createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
-		createInfo.pEnabledFeatures = &deviceFeatures;
-		createInfo.enabledExtensionCount = static_cast<uint32_t>(VulkanDefines::DeviceExtensions.size());
-		createInfo.ppEnabledExtensionNames = VulkanDefines::DeviceExtensions.data();
-
-		if (enableValidationLayers)
-		{
-			createInfo.enabledLayerCount = static_cast<uint32_t>(VulkanDefines::ValidationLayers.size());
-			createInfo.ppEnabledLayerNames = VulkanDefines::ValidationLayers.data();
-		}
-		else
-		{
-			createInfo.enabledLayerCount = 0;
-		}
-
-		if (vkCreateDevice(m_pDevice, &createInfo, nullptr, &m_lDevice) != VK_SUCCESS)
-			throw std::runtime_error("failed to create logical device!");
-
-		vkGetDeviceQueue(m_lDevice, indices.graphicsFamily.value(), 0, &m_graphicsQueue);
-		vkGetDeviceQueue(m_lDevice, indices.presentFamily.value(), 0, &m_presentQueue);
-	}
-
-	void VulkanRenderer::CreateSurface()
-	{
-		if (glfwCreateWindowSurface(vInstance, m_glfwWindow, nullptr, &m_vSurface) != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to create window surface!");
-		}
-	}
 
 	void VulkanRenderer::CreateSwapChain()
 	{
-		VulkanDefines::SwapChainSupportDetails swapChainSupport = QuerySwapChainSupport(m_pDevice);
+		VulkanDefines::SwapChainSupportDetails swapChainSupport = VkDeviceManager::GetInstance()->QuerySwapChainSupport();
 
 		VkSurfaceFormatKHR surfaceFormat = VulkanHelpers::ChooseSwapSurfaceFormat(swapChainSupport.formats);
 		VkPresentModeKHR presentMode = VulkanHelpers::ChooseSwapPresentMode(swapChainSupport.presentModes);
@@ -185,7 +32,7 @@ namespace ThaumaEngine {
 
 		VkSwapchainCreateInfoKHR createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-		createInfo.surface = m_vSurface;
+		createInfo.surface = VkDeviceManager::GetInstance()->GetSurface();
 
 		createInfo.minImageCount = imageCount;
 		createInfo.imageFormat = surfaceFormat.format;
@@ -194,7 +41,7 @@ namespace ThaumaEngine {
 		createInfo.imageArrayLayers = 1;
 		createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-		VulkanDefines::QueueFamilyIndices indices = FindQueueFamilies(m_pDevice);
+		VulkanDefines::QueueFamilyIndices indices = VkDeviceManager::GetInstance()->FindQueueFamilies();
 		uint32_t queueFamilyIndices[] = { indices.graphicsFamily.value(), indices.presentFamily.value() };
 
 		if (indices.graphicsFamily != indices.presentFamily)
@@ -215,15 +62,15 @@ namespace ThaumaEngine {
 		createInfo.clipped = true;
 
 		createInfo.oldSwapchain = VK_NULL_HANDLE;
-
-		if (vkCreateSwapchainKHR(m_lDevice, &createInfo, nullptr, &m_swapChain) != VK_SUCCESS)
+		VkDevice lDevice = VkDeviceManager::GetInstance()->GetLogicalDevice();
+		if (vkCreateSwapchainKHR(lDevice, &createInfo, nullptr, &m_swapChain) != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to create swap chain!");
 		}
 
-		vkGetSwapchainImagesKHR(m_lDevice, m_swapChain, &imageCount, nullptr);
+		vkGetSwapchainImagesKHR(lDevice, m_swapChain, &imageCount, nullptr);
 		m_swapChainImages.resize(imageCount);
-		vkGetSwapchainImagesKHR(m_lDevice, m_swapChain, &imageCount, m_swapChainImages.data());
+		vkGetSwapchainImagesKHR(lDevice, m_swapChain, &imageCount, m_swapChainImages.data());
 
 		m_swapChainExtent = extent;
 		m_swapChainImageFormat = surfaceFormat.format;
@@ -233,6 +80,7 @@ namespace ThaumaEngine {
 
 	void VulkanRenderer::CreateImageViews()
 	{
+		VkDevice lDevice = VkDeviceManager::GetInstance()->GetLogicalDevice();
 		m_swapChainImageViews.resize(m_swapChainImages.size());
 		for (size_t i = 0; i < m_swapChainImages.size(); i++) {
 
@@ -254,7 +102,7 @@ namespace ThaumaEngine {
 			createInfo.subresourceRange.baseArrayLayer = 0;
 			createInfo.subresourceRange.layerCount = 1;
 
-			if (vkCreateImageView(m_lDevice, &createInfo, nullptr, &m_swapChainImageViews[i]) != VK_SUCCESS) {
+			if (vkCreateImageView(lDevice, &createInfo, nullptr, &m_swapChainImageViews[i]) != VK_SUCCESS) {
 				throw std::runtime_error("failed to create image views!");
 			}
 		}
@@ -262,6 +110,7 @@ namespace ThaumaEngine {
 
 	void VulkanRenderer::CreateRenderPass()
 	{
+		VkDevice lDevice = VkDeviceManager::GetInstance()->GetLogicalDevice();
 		VkAttachmentDescription colorAttachment{};
 		colorAttachment.format = m_swapChainImageFormat;
 		colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -302,7 +151,7 @@ namespace ThaumaEngine {
 
 
 
-		if (vkCreateRenderPass(m_lDevice, &renderPassInfo, nullptr, &m_renderPass) != VK_SUCCESS) {
+		if (vkCreateRenderPass(lDevice, &renderPassInfo, nullptr, &m_renderPass) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create render pass!");
 		}
 
@@ -311,14 +160,15 @@ namespace ThaumaEngine {
 
 	void VulkanRenderer::CreateGraphicsPipeline()
 	{
+		VkDevice lDevice = VkDeviceManager::GetInstance()->GetLogicalDevice();
 		auto bindingDescription = MeshStructures::Vertex::GetBindingDescription();
 		auto attributeDescriptions = MeshStructures::Vertex::GetAttributeDescriptions();
 
 		auto vertShaderCode = VulkanHelpers::ReadFileSPV("Shaders/Compiled/base-vert.spv");
 		auto fragShaderCode = VulkanHelpers::ReadFileSPV("Shaders/Compiled/base-frag.spv");
 
-		VkShaderModule vertShaderModule = VulkanHelpers::CreateShaderModule(m_lDevice, vertShaderCode);
-		VkShaderModule fragShaderModule = VulkanHelpers::CreateShaderModule(m_lDevice, fragShaderCode);
+		VkShaderModule vertShaderModule = VulkanHelpers::CreateShaderModule(lDevice, vertShaderCode);
+		VkShaderModule fragShaderModule = VulkanHelpers::CreateShaderModule(lDevice, fragShaderCode);
 
 		VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
 		vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -423,7 +273,7 @@ namespace ThaumaEngine {
 		pipelineLayoutInfo.pushConstantRangeCount = 0; // Optional
 		pipelineLayoutInfo.pPushConstantRanges = nullptr; // Optional
 
-		if (vkCreatePipelineLayout(m_lDevice, &pipelineLayoutInfo, nullptr, &m_piplineLayout) != VK_SUCCESS) {
+		if (vkCreatePipelineLayout(lDevice, &pipelineLayoutInfo, nullptr, &m_piplineLayout) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create pipeline layout!");
 		}
 
@@ -447,19 +297,20 @@ namespace ThaumaEngine {
 		pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
 		pipelineInfo.basePipelineIndex = -1; // Optional
 
-		if (vkCreateGraphicsPipelines(m_lDevice, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_graphicsPipeline) != VK_SUCCESS) {
+		if (vkCreateGraphicsPipelines(lDevice, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_graphicsPipeline) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create graphics pipeline!");
 		}
 
 
 
 
-		vkDestroyShaderModule(m_lDevice, fragShaderModule, nullptr);
-		vkDestroyShaderModule(m_lDevice, vertShaderModule, nullptr);
+		vkDestroyShaderModule(lDevice, fragShaderModule, nullptr);
+		vkDestroyShaderModule(lDevice, vertShaderModule, nullptr);
 	}
 
 	void VulkanRenderer::CreateFrameBuffers()
 	{
+		VkDevice lDevice = VkDeviceManager::GetInstance()->GetLogicalDevice();
 		m_swapChainFramebuffers.resize(m_swapChainImageViews.size());
 
 		for (size_t i = 0; i < m_swapChainImageViews.size(); i++) {
@@ -476,7 +327,7 @@ namespace ThaumaEngine {
 			framebufferInfo.height = m_swapChainExtent.height;
 			framebufferInfo.layers = 1;
 
-			if (vkCreateFramebuffer(m_lDevice, &framebufferInfo, nullptr, &m_swapChainFramebuffers[i]) != VK_SUCCESS) {
+			if (vkCreateFramebuffer(lDevice, &framebufferInfo, nullptr, &m_swapChainFramebuffers[i]) != VK_SUCCESS) {
 				throw std::runtime_error("failed to create framebuffer!");
 			}
 		}
@@ -484,20 +335,22 @@ namespace ThaumaEngine {
 
 	void VulkanRenderer::CreateCommandPool()
 	{
-		VulkanDefines::QueueFamilyIndices queueFamilyIndices = FindQueueFamilies(m_pDevice);
+		VulkanDefines::QueueFamilyIndices queueFamilyIndices = VkDeviceManager::GetInstance()->FindQueueFamilies();
+		VkDevice lDevice = VkDeviceManager::GetInstance()->GetLogicalDevice();
 
 		VkCommandPoolCreateInfo poolInfo{};
 		poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 		poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 		poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
 
-		if (vkCreateCommandPool(m_lDevice, &poolInfo, nullptr, &m_commandPool) != VK_SUCCESS) {
+		if (vkCreateCommandPool(lDevice, &poolInfo, nullptr, &m_commandPool) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create command pool!");
 		}
 	}
 
 	void VulkanRenderer::CreateCommandBuffers()
 	{
+		VkDevice lDevice = VkDeviceManager::GetInstance()->GetLogicalDevice();
 		m_commandBuffers.resize(m_swapChainFramebuffers.size());
 
 		VkCommandBufferAllocateInfo allocInfo{};
@@ -506,13 +359,14 @@ namespace ThaumaEngine {
 		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 		allocInfo.commandBufferCount = (uint32_t)m_commandBuffers.size();
 
-		if (vkAllocateCommandBuffers(m_lDevice, &allocInfo, m_commandBuffers.data()) != VK_SUCCESS) {
+		if (vkAllocateCommandBuffers(lDevice, &allocInfo, m_commandBuffers.data()) != VK_SUCCESS) {
 			throw std::runtime_error("failed to allocate command buffers!");
 		}
 	}
 
 	void VulkanRenderer::CreateSyncObject()
 	{
+		VkDevice lDevice = VkDeviceManager::GetInstance()->GetLogicalDevice();
 		m_imageAvailableSemaphore.resize(MAX_FRAMES_IN_FLIGHT);
 		m_renderFinishedSemaphore.resize(MAX_FRAMES_IN_FLIGHT);
 		m_inFlightFence.resize(MAX_FRAMES_IN_FLIGHT);
@@ -526,9 +380,9 @@ namespace ThaumaEngine {
 
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
 		{
-			if (vkCreateSemaphore(m_lDevice, &semaphoreInfo, nullptr, &m_imageAvailableSemaphore[i]) != VK_SUCCESS ||
-				vkCreateSemaphore(m_lDevice, &semaphoreInfo, nullptr, &m_renderFinishedSemaphore[i]) != VK_SUCCESS ||
-				vkCreateFence(m_lDevice, &fenceInfo, nullptr, &m_inFlightFence[i]) != VK_SUCCESS)
+			if (vkCreateSemaphore(lDevice, &semaphoreInfo, nullptr, &m_imageAvailableSemaphore[i]) != VK_SUCCESS ||
+				vkCreateSemaphore(lDevice, &semaphoreInfo, nullptr, &m_renderFinishedSemaphore[i]) != VK_SUCCESS ||
+				vkCreateFence(lDevice, &fenceInfo, nullptr, &m_inFlightFence[i]) != VK_SUCCESS)
 			{
 				throw std::runtime_error("failed to create synchronization objects for a frame!");
 			}
@@ -537,6 +391,7 @@ namespace ThaumaEngine {
 
 	void VulkanRenderer::RecreateSwapChain()
 	{
+		VkDevice lDevice = VkDeviceManager::GetInstance()->GetLogicalDevice();
 		int width = 0, height = 0;
 		glfwGetFramebufferSize(m_glfwWindow, &width, &height);
 		while (width == 0 || height == 0) {
@@ -545,7 +400,7 @@ namespace ThaumaEngine {
 		}
 
 
-		vkDeviceWaitIdle(m_lDevice);
+		vkDeviceWaitIdle(lDevice);
 
 		CleanSwapChain();
 
@@ -612,205 +467,42 @@ namespace ThaumaEngine {
 
 
 
-	std::vector<const char*> VulkanRenderer::GetInstanceExtensions()
-	{
-		uint32_t glfwExtensionCount = 0;
-		std::vector<const char*> instanceExtensions = std::vector<const char*>();
-
-		const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
-		for (size_t i = 0; i < glfwExtensionCount; i++)
-		{
-			instanceExtensions.push_back(glfwExtensions[i]);
-		}
-
-		if (enableValidationLayers)
-		{
-			instanceExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-		}
 
 
-		if (!VulkanHelpers::CheckInstanceExtensionSupport(instanceExtensions))
-		{
-			throw std::runtime_error("One or more instance extensions not supported!");
-		}
 
-		return instanceExtensions;
-	}
-
-
-	u32 VulkanRenderer::RateDeviceSuitability(VkPhysicalDevice device)
-	{
-		VkPhysicalDeviceProperties deviceProperties;
-		vkGetPhysicalDeviceProperties(device, &deviceProperties);
-		VkPhysicalDeviceFeatures deviceFeatures;
-		vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
-
-		int score = 0;
-
-
-		if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
-		{
-			score += 10000;
-		}
-		VulkanDefines::QueueFamilyIndices indices = FindQueueFamilies(device);
-		if (indices.graphicsFamily.has_value())
-			score += 1000;
-
-		b8 extensionsSupported = VulkanHelpers::CheckDeviceExtensionSupport(device);
-
-		b8 swapChainAdequate = false;
-		if (extensionsSupported)
-		{
-			VulkanDefines::SwapChainSupportDetails swapChainSupport = QuerySwapChainSupport(device);
-			swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
-		}
-		if (!swapChainAdequate || !extensionsSupported)
-		{
-			score = -10000;
-		}
-
-
-		return score;
-	}
-
-
-	VulkanDefines::QueueFamilyIndices VulkanRenderer::FindQueueFamilies(VkPhysicalDevice device)
-	{
-		VulkanDefines::QueueFamilyIndices indices;
-
-		uint32_t queueFamilyCount = 0;
-		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
-
-		std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
-		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
-
-		int i = 0;
-		for (const auto& queueFamily : queueFamilies)
-		{
-			if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
-				indices.graphicsFamily = i;
-
-			VkBool32 presentSupport = false;
-			vkGetPhysicalDeviceSurfaceSupportKHR(device, i, m_vSurface, &presentSupport);
-			if (presentSupport)
-				indices.presentFamily = i;
-
-			if (indices.isComplete())
-				break;
-			i++;
-		}
-
-		return indices;
-	}
-
-
-	VulkanDefines::SwapChainSupportDetails VulkanRenderer::QuerySwapChainSupport(VkPhysicalDevice device)
-	{
-		VulkanDefines::SwapChainSupportDetails details;
-
-		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, m_vSurface, &details.capabilities);
-
-		uint32_t formatCount;
-		vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_vSurface, &formatCount, nullptr);
-
-		if (formatCount != 0)
-		{
-			details.formats.resize(formatCount);
-			vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_vSurface, &formatCount, details.formats.data());
-		}
-
-		uint32_t presentModeCount;
-		vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_vSurface, &presentModeCount, nullptr);
-
-		if (presentModeCount != 0)
-		{
-			details.presentModes.resize(presentModeCount);
-			vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_vSurface, &presentModeCount, details.presentModes.data());
-		}
-
-		return details;
-	}
-
-
-	VkResult VulkanRenderer::CreateDebugUtilsMessangerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
-		const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessanger)
-	{
-		auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
-		if (func != nullptr)
-			return func(instance, pCreateInfo, pAllocator, pDebugMessanger);
-		else
-			return VK_ERROR_EXTENSION_NOT_PRESENT;
-	}
-
-	void VulkanRenderer::DestroyDebugUtilsMessangerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator)
-	{
-		auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
-		if (func != nullptr)
-			return func(instance, debugMessenger, pAllocator);
-	}
-
-	void VulkanRenderer::PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo)
-	{
-		createInfo = {};
-		createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-		createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
-			VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
-			VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-		createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
-			VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
-			VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-		createInfo.pfnUserCallback = DebugCallback;
-	}
-
-	VKAPI_ATTR VkBool32 VKAPI_CALL VulkanRenderer::DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-		VkDebugUtilsMessageTypeFlagsEXT messageType,
-		const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-		void* pUserData)
-	{
-		if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
-		{
-			std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
-		}
-
-		return VK_FALSE;
-	}
 
 	void VulkanRenderer::CleanSwapChain()
 	{
-
+		VkDevice lDevice = VkDeviceManager::GetInstance()->GetLogicalDevice();
 		for (auto framebuffer : m_swapChainFramebuffers) {
-			vkDestroyFramebuffer(m_lDevice, framebuffer, nullptr);
+			vkDestroyFramebuffer(lDevice, framebuffer, nullptr);
 		}
 		for (auto imageView : m_swapChainImageViews)
 		{
-			vkDestroyImageView(m_lDevice, imageView, nullptr);
+			vkDestroyImageView(lDevice, imageView, nullptr);
 		}
-		vkDestroySwapchainKHR(m_lDevice, m_swapChain, nullptr);
+		vkDestroySwapchainKHR(lDevice, m_swapChain, nullptr);
 	}
 
 	VulkanRenderer::~VulkanRenderer()
 	{
+		VkDevice lDevice = VkDeviceManager::GetInstance()->GetLogicalDevice();
 		CleanSwapChain();
-
-		vkDestroyBuffer(m_lDevice, m_vertexBuffer, nullptr);
-		vkFreeMemory(m_lDevice, m_vertexBufferMemory, nullptr);
+		vkDestroyBuffer(lDevice, m_vertexBuffer, nullptr);
+		vkFreeMemory(lDevice, m_vertexBufferMemory, nullptr);
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
 		{
-			vkDestroySemaphore(m_lDevice, m_imageAvailableSemaphore[i], nullptr);
-			vkDestroySemaphore(m_lDevice, m_renderFinishedSemaphore[i], nullptr);
-			vkDestroyFence(m_lDevice, m_inFlightFence[i], nullptr);
+			vkDestroySemaphore(lDevice , m_imageAvailableSemaphore[i], nullptr);
+			vkDestroySemaphore(lDevice , m_renderFinishedSemaphore[i], nullptr);
+			vkDestroyFence(lDevice, m_inFlightFence[i], nullptr);
 		}
 
-		vkDestroyCommandPool(m_lDevice, m_commandPool, nullptr);
-		vkDestroyPipeline(m_lDevice, m_graphicsPipeline, nullptr);
-		vkDestroyPipelineLayout(m_lDevice, m_piplineLayout, nullptr);
-		vkDestroyRenderPass(m_lDevice, m_renderPass, nullptr);
-		vkDestroySurfaceKHR(vInstance, m_vSurface, nullptr);
-		vkDestroyDevice(m_lDevice, nullptr);
-		if (enableValidationLayers)
-			DestroyDebugUtilsMessangerEXT(vInstance, debugMessenger, nullptr);
-		vkDestroyInstance(vInstance, nullptr);
+		vkDestroyCommandPool(lDevice, m_commandPool, nullptr);
+		vkDestroyPipeline(lDevice, m_graphicsPipeline, nullptr);
+		vkDestroyPipelineLayout(lDevice, m_piplineLayout, nullptr);
+		vkDestroyRenderPass(lDevice, m_renderPass, nullptr);
 
+		delete VkDeviceManager::GetInstance();
 	}
 
 	VulkanRenderer::VulkanRenderer()
@@ -819,11 +511,9 @@ namespace ThaumaEngine {
 	int VulkanRenderer::Init(GLFWwindow* window)
 	{
 		m_glfwWindow = window;
-		CreateInstance();
-		SetupDebugMessanger();
-		CreateSurface();
-		SelectPhysicalDevice();
-		CreateLogicalDevice();
+		VkDeviceManager::GetInstance()->Init(window);
+		VkDevice lDevice = VkDeviceManager::GetInstance()->GetLogicalDevice();
+		VkPhysicalDevice pDevice = VkDeviceManager::GetInstance()->GetPhysicalDevice();
 		CreateSwapChain();
 		CreateImageViews();
 		CreateRenderPass();
@@ -831,7 +521,7 @@ namespace ThaumaEngine {
 		CreateFrameBuffers();
 		CreateCommandPool();
 		std::vector<MeshStructures::Vertex> verticies = MeshStructures::vertices;
-		CreateVertexBuffer(verticies, m_vertexBuffer, m_vertexBufferMemory, m_lDevice, m_pDevice);
+		CreateVertexBuffer(verticies, m_vertexBuffer, m_vertexBufferMemory, lDevice, pDevice);
 		CreateCommandBuffers();
 		CreateSyncObject();
 
@@ -841,8 +531,9 @@ namespace ThaumaEngine {
 
 	void VulkanRenderer::StartRendering()
 	{
-		vkWaitForFences(m_lDevice, 1, &m_inFlightFence[m_currentFrame], VK_TRUE, UINT64_MAX);
-		VkResult result = vkAcquireNextImageKHR(m_lDevice, m_swapChain, UINT64_MAX, m_imageAvailableSemaphore[m_currentFrame], VK_NULL_HANDLE, &m_imageIndex);
+		VkDevice lDevice = VkDeviceManager::GetInstance()->GetLogicalDevice();
+		vkWaitForFences(lDevice, 1, &m_inFlightFence[m_currentFrame], VK_TRUE, UINT64_MAX);
+		VkResult result = vkAcquireNextImageKHR(lDevice, m_swapChain, UINT64_MAX, m_imageAvailableSemaphore[m_currentFrame], VK_NULL_HANDLE, &m_imageIndex);
 
 
 		if (result == VK_ERROR_OUT_OF_DATE_KHR)
@@ -854,13 +545,15 @@ namespace ThaumaEngine {
 			throw std::runtime_error("failed to acquire swap chain image!");
 		}
 
-		vkResetFences(m_lDevice, 1, &m_inFlightFence[m_currentFrame]);
+		vkResetFences(lDevice, 1, &m_inFlightFence[m_currentFrame]);
 		vkResetCommandBuffer(m_commandBuffers[m_currentFrame], 0);
 		StartCommandBufferRecording(m_commandBuffers[m_currentFrame], m_imageIndex);
 	}
 
 	void VulkanRenderer::FinishRendering()
 	{
+		VkQueue graphicsQueue = VkDeviceManager::GetInstance()->GetGraphicsQueue();
+		VkQueue presentationQueue = VkDeviceManager::GetInstance()->GetPresentaionQueue();
 
 		FinishCommandBufferRecording(m_commandBuffers[m_currentFrame], m_imageIndex);
 
@@ -879,7 +572,7 @@ namespace ThaumaEngine {
 		submitInfo.signalSemaphoreCount = 1;
 		submitInfo.pSignalSemaphores = signalSemaphores;
 
-		if (vkQueueSubmit(m_graphicsQueue, 1, &submitInfo, m_inFlightFence[m_currentFrame]) != VK_SUCCESS) {
+		if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, m_inFlightFence[m_currentFrame]) != VK_SUCCESS) {
 			throw std::runtime_error("failed to submit draw command buffer!");
 		}
 
@@ -895,7 +588,7 @@ namespace ThaumaEngine {
 		presentInfo.pSwapchains = swapChains;
 		presentInfo.pImageIndices = &m_imageIndex;
 		presentInfo.pResults = nullptr; // Optional
-		VkResult result = vkQueuePresentKHR(m_presentQueue, &presentInfo);
+		VkResult result = vkQueuePresentKHR(presentationQueue, &presentInfo);
 
 		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_frameBufferResized) {
 			m_frameBufferResized = false;
@@ -934,6 +627,7 @@ namespace ThaumaEngine {
 
 	void VulkanRenderer::Complete()
 	{
-		vkDeviceWaitIdle(m_lDevice);
+		VkDevice lDevice = VkDeviceManager::GetInstance()->GetLogicalDevice();
+		vkDeviceWaitIdle(lDevice);
 	}
 }

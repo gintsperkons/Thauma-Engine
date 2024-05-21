@@ -17,14 +17,14 @@ namespace ThaumaEngine {
 
 
 	public:
-		VkDeviceManager GetInstance();
-		void Init(GLFWwindow &window);
+		static VkDeviceManager* GetInstance();
+		void Init(GLFWwindow* window);
 
 		~VkDeviceManager();
 
 	protected:
-		VkDeviceManager* m_instance;
 	private:
+
 		VkDeviceManager();
 		void CreateInstance();
 		void SetupDebugMessanger();
@@ -43,7 +43,22 @@ namespace ThaumaEngine {
 		b8 CheckDeviceExtensionSupport(VkPhysicalDevice device);
 		VkResult CreateDebugUtilsMessangerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
 			const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessanger);
-			VulkanDefines::QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
-			VulkanDefines::SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device);
+		void DestroyDebugUtilsMessangerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator);
+
+
+		VulkanDefines::QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
+		VulkanDefines::SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device);
+	public:
+		VulkanDefines::QueueFamilyIndices FindQueueFamilies();
+		VulkanDefines::SwapChainSupportDetails QuerySwapChainSupport();
+
+		//Getters Setters
+	public:
+		VkInstance GetVulkanInstance();
+		VkSurfaceKHR GetSurface();
+		VkDevice GetLogicalDevice();
+		VkPhysicalDevice GetPhysicalDevice();
+		VkQueue GetGraphicsQueue();
+		VkQueue GetPresentaionQueue();
 	};
 }

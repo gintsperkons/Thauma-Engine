@@ -22,9 +22,6 @@ namespace ThaumaEngine {
 		u32 m_currentFrame = 0;
 		GLFWwindow* m_glfwWindow;
 		bool m_frameBufferResized = false;
-		VkPhysicalDevice m_pDevice = VK_NULL_HANDLE;
-		VkDevice m_lDevice = VK_NULL_HANDLE;
-		VkSurfaceKHR m_vSurface;
 		VkSwapchainKHR m_swapChain;
 		std::vector<VkImage> m_swapChainImages;
 		VkFormat m_swapChainImageFormat;
@@ -41,8 +38,6 @@ namespace ThaumaEngine {
 		VkBuffer m_vertexBuffer;
 		VkDeviceMemory m_vertexBufferMemory;
 
-		VkQueue m_graphicsQueue;
-		VkQueue m_presentQueue;
 		std::vector<VkSemaphore> m_imageAvailableSemaphore;
 		std::vector<VkSemaphore> m_renderFinishedSemaphore;
 		std::vector<VkFence> m_inFlightFence;
@@ -55,14 +50,7 @@ namespace ThaumaEngine {
 #endif
 
 	private:
-		VkInstance vInstance;
-		VkDebugUtilsMessengerEXT debugMessenger;
 		//CreationSelection Funcions
-		void CreateInstance();
-		void SetupDebugMessanger();
-		void SelectPhysicalDevice();
-		void CreateLogicalDevice();
-		void CreateSurface();
 		void CreateSwapChain();
 		void CreateImageViews();
 		void CreateRenderPass();
@@ -77,26 +65,11 @@ namespace ThaumaEngine {
 
 
 
-		//Getter Functions
-		std::vector<const char*>GetInstanceExtensions();
 		//SupportCreationAndDestruction Functions
 		void StartCommandBufferRecording(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 		void FinishCommandBufferRecording(VkCommandBuffer commandBuffer, uint32_t imageIndex);
-		u32 RateDeviceSuitability(VkPhysicalDevice device);
-		VulkanDefines::QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
-		VulkanDefines::SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device);
-		VkResult CreateDebugUtilsMessangerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
-			const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessanger);
-		void DestroyDebugUtilsMessangerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger,
-			const VkAllocationCallbacks* pAllocator);
 
-		//Support Functions
-		void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
-		static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(
-			VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-			VkDebugUtilsMessageTypeFlagsEXT messageType,
-			const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-			void* pUserData);
+
 
 
 
