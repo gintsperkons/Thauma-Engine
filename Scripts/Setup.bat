@@ -32,9 +32,9 @@ if "%output%"=="2" (
 
 
 
-call "!directory!python.exe" "!%~dp0!Setup.py" "SetupPython" "%~1" "%~2"
-call "!directory!python.exe" "!%~dp0!Setup.py" "SetupPremake" "%~1" "%~2"
-call "!directory!python.exe" "!%~dp0!Setup.py" "VulkanSDKSetup" "%~1" "%~2"
+call "!directory!python.exe" "!%~dp0!Setup.py" "SetupPython" "%~1" "%~2" "%~3"
+call "!directory!python.exe" "!%~dp0!Setup.py" "SetupPremake" "%~1" "%~2" "%~3"
+call "!directory!python.exe" "!%~dp0!Setup.py" "VulkanSDKSetup" "%~1" "%~2" "%~3"
 
 
 if  "%~1"=="vs2022" (

@@ -10,7 +10,11 @@ import Utils
 args = sys.argv
 task = args[1]
 environment = args[2]
-
+autoAccept = -1
+if autoAccept == "Yes":
+    autoAccept = 1
+if autoAccept == "No":
+    autoAccept = 0
 
 
 
@@ -28,9 +32,17 @@ if task == "SetupPremake":
 if task == "VulkanSDKSetup":
     vulkanInstallerUrl = "https://sdk.lunarg.com/sdk/download/1.3.280.0/windows/VulkanSDK-1.3.280.0-Installer.exe"
     vulkanPath = os.environ["VULKAN_SDK"]
-    vulkanPath = ""
     if vulkanPath == "":
-        if input("Install VulkanSDK Y|N ") != "y":
+        install = False
+        if  autoAccept == 0:
+            install = False
+        elif autoAccept == 1:
+            install = True
+        elif input("Install VulkanSDK Y|N ") == "y":
+            install = True
+        else:
+            install = False
+        if not install:
             print("VulkanSDK is required accept or install manually from https://vulkan.lunarg.com/sdk/home#windows")
         else:
             Utils.checkDirectory(Defines.TempPath)
