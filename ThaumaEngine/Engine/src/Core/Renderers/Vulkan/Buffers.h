@@ -4,6 +4,7 @@
 #include "MeshStructures.h"
 #include <vector>
 namespace ThaumaEngine {
-	void CreateVertexBuffer(std::vector<MeshStructures::Vertex>& vertecies, VkBuffer& vertexBuffer, VkDeviceMemory& vertexBufferMemory, VkDevice lDevice, VkPhysicalDevice pDevice);
-	void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory, VkDevice lDevice, VkPhysicalDevice pDevice);
+	void CreateVertexBuffer(std::vector<MeshStructures::Vertex>& vertecies, VkBuffer& vertexBuffer, VkDeviceMemory& vertexBufferMemory);
+	void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+	void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 }

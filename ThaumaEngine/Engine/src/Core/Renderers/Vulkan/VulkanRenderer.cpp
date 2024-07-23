@@ -512,8 +512,6 @@ namespace ThaumaEngine {
 	{
 		m_glfwWindow = window;
 		VkDeviceManager::GetInstance()->Init(window);
-		VkDevice lDevice = VkDeviceManager::GetInstance()->GetLogicalDevice();
-		VkPhysicalDevice pDevice = VkDeviceManager::GetInstance()->GetPhysicalDevice();
 		CreateSwapChain();
 		CreateImageViews();
 		CreateRenderPass();
@@ -521,7 +519,7 @@ namespace ThaumaEngine {
 		CreateFrameBuffers();
 		CreateCommandPool();
 		std::vector<MeshStructures::Vertex> verticies = MeshStructures::vertices;
-		CreateVertexBuffer(verticies, m_vertexBuffer, m_vertexBufferMemory, lDevice, pDevice);
+		CreateVertexBuffer(verticies, m_vertexBuffer, m_vertexBufferMemory);
 		CreateCommandBuffers();
 		CreateSyncObject();
 

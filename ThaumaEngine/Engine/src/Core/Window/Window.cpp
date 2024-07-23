@@ -32,6 +32,7 @@ void Window::Init(const char* title, int width, int height)
 TAPI b8 Window::ShouldClose()
 {
 	return glfwWindowShouldClose(m_window);
+	
 }
 
 TAPI void Window::Update()

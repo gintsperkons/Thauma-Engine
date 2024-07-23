@@ -1,23 +1,32 @@
 #include "Buffers.h"
 #include "VulkanHelpers.h"
+#include "VkDeviceManager.h"
 #include <stdexcept>
 
 namespace ThaumaEngine {
-	void CreateVertexBuffer(std::vector<MeshStructures::Vertex>& vertecies, VkBuffer& vertexBuffer, VkDeviceMemory& vertexBufferMemory, VkDevice lDevice, VkPhysicalDevice pDevice)
+	void CreateVertexBuffer(std::vector<MeshStructures::Vertex>& vertecies, VkBuffer& vertexBuffer, VkDeviceMemory& vertexBufferMemory)
 	{
+		VkDevice lDevice = VkDeviceManager::GetInstance()->GetLogicalDevice();
 
 		VkDeviceSize bufferSize = sizeof(vertecies[0]) * vertecies.size();
-		CreateBuffer(bufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, vertexBuffer, vertexBufferMemory, lDevice, pDevice);
+		//VkBuffer stagingBuffer;
+		//VkDeviceMemory stagingBufferMemory;
+		//CreateBuffer(bufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+		CreateBuffer(bufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, vertexBuffer, vertexBufferMemory);
 
 
 		void* data;
 		vkMapMemory(lDevice, vertexBufferMemory, 0, bufferSize, 0, &data);
 		memcpy(data, vertecies.data(), (size_t)bufferSize);
 		vkUnmapMemory(lDevice, vertexBufferMemory);
+
+
 	}
 
-	void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory, VkDevice lDevice, VkPhysicalDevice pDevice)
+	void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory)
 	{
+		VkDevice lDevice = VkDeviceManager::GetInstance()->GetLogicalDevice();
+		VkPhysicalDevice pDevice = VkDeviceManager::GetInstance()->GetPhysicalDevice();
 		VkBufferCreateInfo bufferInfo{};
 		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
 		bufferInfo.size = size;
@@ -45,5 +54,13 @@ namespace ThaumaEngine {
 
 
 
+	}
+	void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
+	{
+		VkDevice lDevice = VkDeviceManager::GetInstance()->GetLogicalDevice();
+		VkCommandBufferAllocateInfo allocInfo{};
+		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		allocInfo.commandPool = 0;//temp unfinished
 	}
 }
