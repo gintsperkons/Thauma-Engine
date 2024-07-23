@@ -10,16 +10,16 @@ targetdir("%{wks.location}/Binaries/" .. OutputDir .. "/%{prj.name}")
 objdir("%{wks.location}/Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")
 debugdir("%{wks.location}/Binaries/" .. OutputDir .. "/%{prj.name}")
 
-includedirs {"src",
-"%{wks.location}/ThaumaEngine/Engine/src"}
+includedirs {"Source",
+-- "%{wks.location}/ThaumaEngine/Engine/src"
+}
 
 links {
-    "ThaumaEngineLib"
 }
 
 
 
-files {"src/**.h", "src/**.cpp"}
+files {"Source/**.h", "Source/**.cpp"}
 
 filter "system:windows"
 systemversion "latest"
