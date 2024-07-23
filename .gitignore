@@ -1,0 +1,15 @@
+#Custom
+Binaries/
+Vendor/Binary/*
+
+#VS
+.vs/
+*.suo
+*.user
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.sln
+
+#Python
+__pycache__/
