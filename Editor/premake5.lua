@@ -1,4 +1,4 @@
-project "TestBed"
+project "ThaumaEngineEditor"
 kind "ConsoleApp"
 language "C++"
 cppdialect "C++20"
@@ -12,10 +12,11 @@ debugdir("%{wks.location}/Binaries/" .. OutputDir .. "/%{prj.name}")
 
 includedirs {"Source",
 "%{wks.location}/Engine/Source"
+
 }
 
 links {
-    "ThaumaEngineLib"
+ "ThaumaEngineLib"
 }
 
 

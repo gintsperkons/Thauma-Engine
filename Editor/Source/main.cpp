@@ -1,8 +1,7 @@
 #include <Engine.h>
 
 
-
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
 	ThaumaEngine::Engine* engine = ThaumaEngine::Engine::GetInstance();
 	engine->Init();
