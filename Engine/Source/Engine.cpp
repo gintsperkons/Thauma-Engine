@@ -2,6 +2,7 @@
 #include "Core/Logger/Logger.h"
 #include "Core/MemoryManager.h"
 #include "Core/Window/Window.h"
+#include "Core/Renderers/Renderer.h"
 #include <exception>
 #include <stdio.h>
 
@@ -34,6 +35,8 @@ int ThaumaEngine::Engine::Init()
 int ThaumaEngine::Engine::Init(Window *starterWindow)
 {
 	m_window = starterWindow;
+	m_renderer = new Renderer();
+	m_renderer->InitRenderer(RendererType::Vulkan, m_window->GetWindow());
 	LOG_TRACE("Engine Init\n");
 	ThaumaEngine::MemoryManager::LogAllocations();
 	return 0;
