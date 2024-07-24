@@ -1,5 +1,5 @@
-#include "MemoryManager.h"
-#include "Asserts.h"
+#include "Core/MemoryManager.h"
+#include "Core/Asserts.h"
 #include "Logger.h"
 #include <stdio.h>
 

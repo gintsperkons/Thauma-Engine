@@ -1,5 +1,5 @@
 #include "MemoryManager.h"
-#include "Core/Logger.h"
+#include "Core/Logger/Logger.h"
 
 
 ThaumaEngine::MemoryManager::AllocationData allocationData;

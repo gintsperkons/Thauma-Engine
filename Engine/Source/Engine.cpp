@@ -1,5 +1,5 @@
 #include "Engine.h"
-#include "Core/Logger.h"
+#include "Core/Logger/Logger.h"
 #include "Core/MemoryManager.h"
 #include "Core/Window/Window.h"
 #include <exception>
@@ -34,7 +34,7 @@ int ThaumaEngine::Engine::Init()
 int ThaumaEngine::Engine::Init(Window *starterWindow)
 {
 	m_window = starterWindow;
-	ThaumaEngine::Logger::Log(ThaumaEngine::Logger::Level::INFO, "Engine Init\n");
+	LOG_TRACE("Engine Init\n");
 	ThaumaEngine::MemoryManager::LogAllocations();
 	return 0;
 }
