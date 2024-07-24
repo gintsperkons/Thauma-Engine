@@ -31,7 +31,11 @@ std::multimap<int, VkPhysicalDevice> ThaumaEngine::VulkanPhysicalDevice::RateDev
 	std::multimap<int, VkPhysicalDevice> candidates;
 
 	for (const auto& device : devices) {
+		QueueFamilyIndices indices = FindQueueFamilies(device);
 		int score = 0;
+		
+
+		
 		VkPhysicalDeviceProperties deviceProperties;
 		VkPhysicalDeviceFeatures deviceFeatures;
 		vkGetPhysicalDeviceProperties(device, &deviceProperties);
@@ -50,12 +54,43 @@ std::multimap<int, VkPhysicalDevice> ThaumaEngine::VulkanPhysicalDevice::RateDev
 			score = 0;
 		}
 
+		if (!indices.isComplete())
+		{
+			score = 0;
+		}
+
 		LOG_INFO("Possible Device Name: %s\n", deviceProperties.deviceName);
 		candidates.insert(std::pair<int,VkPhysicalDevice>(score,device));
 	}
 
 
 	return candidates;
+}
+
+ThaumaEngine::QueueFamilyIndices ThaumaEngine::VulkanPhysicalDevice::FindQueueFamilies(VkPhysicalDevice device)
+{
+	QueueFamilyIndices indices;
+
+	uint32_t queueFamilyCount = 0;
+	vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+
+	std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+	vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+
+	int i = 0;
+	for (const auto& queueFamily : queueFamilies) {
+		if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+			indices.graphicsFamily = i;
+		}
+
+		if (indices.isComplete()) {
+			break;
+		}
+
+		i++;
+	}
+
+	return indices;
 }
 
 
