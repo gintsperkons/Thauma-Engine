@@ -8,6 +8,7 @@ set getpipLink=https://bootstrap.pypa.io/get-pip.py
 
 pushd %~dp0..\..\
 
+echo Setting Up Python
 :: Call Python to execute a simple command
 for /f "delims=" %%i in ('call "!binaryDir!\Python\python.exe" -c "print(1+1)"') do set output=%%i
 
@@ -38,7 +39,11 @@ if "%output%"=="2" (
 "!binaryDir!\Python\python.exe" "Scripts\Python\Setup.py" "%~1" "%~2" "%~3" 
 
 if exist !binaryDir!\Temp (
+    echo Removing Temp
     rmdir /s /q !binaryDir!\Temp
 )
+
+
+echo Done
 
 popd
