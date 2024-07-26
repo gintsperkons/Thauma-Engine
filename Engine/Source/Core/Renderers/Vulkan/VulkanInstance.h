@@ -5,15 +5,7 @@
 
 namespace ThaumaEngine
 {
-	const std::vector<const char *> validationLayers = {
-		"VK_LAYER_KHRONOS_validation"
-	};
 
-	#ifdef TDEBUG
-		const bool enableValidationLayers = true;
-	#else
-		const bool enableValidationLayers = false;
-	#endif // TDEBUG
 
 
 	class VulkanInstance

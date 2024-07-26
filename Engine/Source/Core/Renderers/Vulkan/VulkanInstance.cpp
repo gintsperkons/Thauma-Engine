@@ -1,4 +1,5 @@
 #include "VulkanInstance.h"
+#include "VulkanStructures.h"
 #include <GLFW/glfw3.h>
 #include <stdexcept>
 #include "Core/Logger/Logger.h"
