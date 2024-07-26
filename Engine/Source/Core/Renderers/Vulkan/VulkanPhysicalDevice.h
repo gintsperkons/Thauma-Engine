@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include <vulkan/vulkan.h>
+
 namespace ThaumaEngine {
 	class VulkanInstance;
 	class VulkanPhysicalDevice
@@ -16,6 +17,8 @@ namespace ThaumaEngine {
 		public:
 			VulkanPhysicalDevice(VulkanInstance* instance);
 			~VulkanPhysicalDevice();
+			QueueFamilyIndices GetQueueFamilyIndices();
+			VkPhysicalDevice GetDevice() { return m_physicalDevice; }
 	};
 }
 

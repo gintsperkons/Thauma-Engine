@@ -106,3 +106,8 @@ ThaumaEngine::VulkanPhysicalDevice::VulkanPhysicalDevice(VulkanInstance* instanc
 ThaumaEngine::VulkanPhysicalDevice::~VulkanPhysicalDevice()
 {
 }
+
+ThaumaEngine::QueueFamilyIndices ThaumaEngine::VulkanPhysicalDevice::GetQueueFamilyIndices()
+{
+	return FindQueueFamilies(m_physicalDevice);
+}

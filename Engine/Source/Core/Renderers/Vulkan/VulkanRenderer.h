@@ -7,10 +7,12 @@ namespace ThaumaEngine
 {
 	class VulkanInstance;
 	class VulkanPhysicalDevice;
+	class VulkanLogicalDevice;
 	class VulkanRenderer: public BaseRenderer
 	{
 		VulkanInstance* m_instance;
 		VulkanPhysicalDevice* m_physicalDevice;
+		VulkanLogicalDevice* m_logicalDevice;
 	public:
 		VulkanRenderer();
 		~VulkanRenderer();
