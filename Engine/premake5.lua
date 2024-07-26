@@ -7,6 +7,8 @@ project "ThaumaEngineLib"
 
     files {"Source\\**.h", "Source\\**.cpp"}
 
+
+
     includedirs
     {
         "Source",
@@ -24,6 +26,10 @@ project "ThaumaEngineLib"
     targetdir ("%{wks.location}\\Binaries\\" .. OutputDir .. "\\%{prj.name}")
     objdir ("%{wks.location}\\Binaries\\Intermediates\\" .. OutputDir .. "\\%{prj.name}")
     debugdir("%{wks.location}\\Binaries\\" .. OutputDir .. "\\%{prj.name}")
+
+    flags {
+        "MultiProcessorCompile"
+    }
 
 prebuildcommands
 {
