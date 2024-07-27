@@ -9,9 +9,10 @@ namespace ThaumaEngine {
 		VkDevice m_device;
 		VulkanPhysicalDevice* m_physicalDevice;
 		VkQueue m_graphicsQueue;
+		VkQueue m_presentQueue;
 		QueueFamilyIndices m_queueIndecies;
 		
-		void PopulateQueueCreateInfo(VkDeviceQueueCreateInfo& queueCreateInfo);
+		void PopulateQueueCreateInfos(std::vector<VkDeviceQueueCreateInfo>& queueCreateInfos);
 		void CreateLogicalDevice();
 	public:
 		VulkanLogicalDevice(VulkanPhysicalDevice* pDevice);
