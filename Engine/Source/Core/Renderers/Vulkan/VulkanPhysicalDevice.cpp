@@ -1,4 +1,5 @@
 #include "VulkanPhysicalDevice.h"
+#include "VulkanSurface.h"
 #include "VulkanInstance.h"
 #include "Core/Logger/Logger.h"
 #include <stdexcept>
@@ -77,11 +78,21 @@ ThaumaEngine::QueueFamilyIndices ThaumaEngine::VulkanPhysicalDevice::FindQueueFa
 	std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
 	vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
 
+
 	int i = 0;
 	for (const auto& queueFamily : queueFamilies) {
 		if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
 			indices.graphicsFamily = i;
 		}
+
+
+		VkBool32 presentSupport = false;	
+		vkGetPhysicalDeviceSurfaceSupportKHR(device, i, m_surface->GetSurface(), &presentSupport);
+		
+		if (presentSupport) {
+			indices.presentFamily = i;
+		}
+
 
 		if (indices.isComplete()) {
 			break;
@@ -97,8 +108,8 @@ ThaumaEngine::QueueFamilyIndices ThaumaEngine::VulkanPhysicalDevice::FindQueueFa
 
 
 
-ThaumaEngine::VulkanPhysicalDevice::VulkanPhysicalDevice(VulkanInstance* instance) 
-	:m_InstanceManager(instance), m_physicalDevice(VK_NULL_HANDLE)
+ThaumaEngine::VulkanPhysicalDevice::VulkanPhysicalDevice(VulkanInstance* instance, VulkanSurface* surface) 
+	:m_InstanceManager(instance),m_surface(surface), m_physicalDevice(VK_NULL_HANDLE)
 {
 	PickPhysicalDevice();
 }

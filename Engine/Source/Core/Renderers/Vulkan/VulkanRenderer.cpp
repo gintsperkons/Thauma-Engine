@@ -18,9 +18,9 @@ void ThaumaEngine::VulkanRenderer::Init(Window* window)
 {
 	m_window = window;
 	m_instance = new VulkanInstance();
-	m_physicalDevice = new VulkanPhysicalDevice(m_instance);
-	m_logicalDevice = new VulkanLogicalDevice(m_physicalDevice);
 	m_surface = new VulkanSurface(m_window,m_instance);
+	m_physicalDevice = new VulkanPhysicalDevice(m_instance,m_surface);
+	m_logicalDevice = new VulkanLogicalDevice(m_physicalDevice);
 }
 
 void ThaumaEngine::VulkanRenderer::Render()

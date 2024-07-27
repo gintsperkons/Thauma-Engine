@@ -16,7 +16,7 @@ namespace ThaumaEngine
 		{
 			isResized = true;
 		}
-		bool IsResized()
+		bool IsResized() const
 		{
 			return isResized;
 		}

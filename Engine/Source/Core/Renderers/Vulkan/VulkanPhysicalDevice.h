@@ -7,18 +7,20 @@
 
 namespace ThaumaEngine {
 	class VulkanInstance;
+	class VulkanSurface;
 	class VulkanPhysicalDevice
 	{
 		VulkanInstance* m_InstanceManager;
+		VulkanSurface* m_surface;
 		VkPhysicalDevice m_physicalDevice;
 		void PickPhysicalDevice();
 		std::multimap<int, VkPhysicalDevice> RateDeviceSutability(std::vector<VkPhysicalDevice> devices);
 		QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
 		public:
-			VulkanPhysicalDevice(VulkanInstance* instance);
+			VulkanPhysicalDevice(VulkanInstance* instance, VulkanSurface* surface);
 			~VulkanPhysicalDevice();
 			QueueFamilyIndices GetQueueFamilyIndices();
-			VkPhysicalDevice GetDevice() { return m_physicalDevice; }
+			VkPhysicalDevice GetDevice() const { return m_physicalDevice; }
 	};
 }
 

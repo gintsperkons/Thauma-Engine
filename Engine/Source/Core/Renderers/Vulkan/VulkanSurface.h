@@ -15,5 +15,6 @@ namespace ThaumaEngine {
 	public:
 		VulkanSurface(Window* window, VulkanInstance* instance);
 		~VulkanSurface();
+		VkSurfaceKHR GetSurface() const { return m_surface; }
 	};
 }
