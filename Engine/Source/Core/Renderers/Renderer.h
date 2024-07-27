@@ -5,6 +5,7 @@
 
 
 
+class Window;
 struct GLFWwindow;
 namespace ThaumaEngine
 {
@@ -23,7 +24,7 @@ namespace ThaumaEngine
 
 	public:
 		Renderer();
-		void InitRenderer(ThaumaEngine::RendererType type, GLFWwindow* window);
+		void InitRenderer(ThaumaEngine::RendererType type, Window* window);
 		~Renderer();
 
 	};

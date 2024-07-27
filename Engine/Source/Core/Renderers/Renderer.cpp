@@ -2,7 +2,7 @@
 #include "Core/Logger/Logger.h"
 #include <iostream>
 
-void ThaumaEngine::Renderer::InitRenderer(RendererType type, GLFWwindow* window)
+void ThaumaEngine::Renderer::InitRenderer(RendererType type, Window* window)
 {
 	switch (type)
 	{
@@ -12,7 +12,7 @@ void ThaumaEngine::Renderer::InitRenderer(RendererType type, GLFWwindow* window)
 	case RendererType::Vulkan:
 		LOG_INFO("Vulkan renderer selected\n");
 		m_currentRenderer = new VulkanRenderer();
-		m_currentRenderer->Init();
+		m_currentRenderer->Init(window);
 		break;
 	case RendererType::OpenGL:
 		LOG_INFO("OpenGL renderer selected\n");

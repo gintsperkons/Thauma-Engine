@@ -36,7 +36,7 @@ int ThaumaEngine::Engine::Init(Window *starterWindow)
 {
 	m_window = starterWindow;
 	m_renderer = new Renderer();
-	m_renderer->InitRenderer(RendererType::Vulkan, m_window->GetWindow());
+	m_renderer->InitRenderer(RendererType::Vulkan, m_window);
 	LOG_TRACE("Engine Init\n");
 	ThaumaEngine::MemoryManager::LogAllocations();
 	return 0;
