@@ -1,8 +1,8 @@
-#include "VulkanSwapChain.h"
+#include "VulkanSurface.h"
 #include "VulkanInstance.h"
 #include <stdexcept>
 
-void ThaumaEngine::VulkanSwapChain::CreateSurface()
+void ThaumaEngine::VulkanSurface::CreateSurface()
 {
 	if (glfwCreateWindowSurface(m_instance->GetInstance(), m_window->GetWindow(), nullptr, &m_surface)) {
 
@@ -10,13 +10,13 @@ void ThaumaEngine::VulkanSwapChain::CreateSurface()
 	}
 }
 
-ThaumaEngine::VulkanSwapChain::VulkanSwapChain(Window* window,VulkanInstance* instance)
+ThaumaEngine::VulkanSurface::VulkanSurface(Window* window,VulkanInstance* instance)
 	:m_window(window), m_instance(instance),m_surface(VK_NULL_HANDLE)
 {
 	CreateSurface();
 }
 
-ThaumaEngine::VulkanSwapChain::~VulkanSwapChain()
+ThaumaEngine::VulkanSurface::~VulkanSurface()
 {
 	vkDestroySurfaceKHR(m_instance->GetInstance(), m_surface, nullptr);
 }

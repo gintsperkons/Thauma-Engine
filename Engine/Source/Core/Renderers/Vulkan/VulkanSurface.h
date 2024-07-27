@@ -6,14 +6,14 @@
 
 namespace ThaumaEngine {
 	class VulkanInstance;
-	class VulkanSwapChain
+	class VulkanSurface
 	{
 		VulkanInstance* m_instance;
 		Window* m_window;
 		VkSurfaceKHR m_surface;
 		void CreateSurface();
 	public:
-		VulkanSwapChain(Window* window, VulkanInstance* instance);
-		~VulkanSwapChain();
+		VulkanSurface(Window* window, VulkanInstance* instance);
+		~VulkanSurface();
 	};
 }
