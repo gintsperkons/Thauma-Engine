@@ -3,6 +3,8 @@
 #include "VulkanInstance.h"
 #include "Core/Logger/Logger.h"
 #include <stdexcept>
+#include <set>
+#include <string>
 
 void ThaumaEngine::VulkanPhysicalDevice::PickPhysicalDevice()
 {
@@ -33,6 +35,7 @@ std::multimap<int, VkPhysicalDevice> ThaumaEngine::VulkanPhysicalDevice::RateDev
 
 	for (const auto& device : devices) {
 		QueueFamilyIndices indices = FindQueueFamilies(device);
+		bool extensionsSupported = CheckDeviceExtensionSupport(device);
 		int score = 0;
 		
 
@@ -102,6 +105,23 @@ ThaumaEngine::QueueFamilyIndices ThaumaEngine::VulkanPhysicalDevice::FindQueueFa
 	}
 
 	return indices;
+}
+
+bool ThaumaEngine::VulkanPhysicalDevice::CheckDeviceExtensionSupport(VkPhysicalDevice device)
+{
+	uint32_t extensionCount;
+	vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
+
+	std::vector<VkExtensionProperties> availableExtensions(extensionCount);
+	vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
+
+	std::set<std::string> requiredExtensions(deviceExtensions.begin(), deviceExtensions.end());
+
+	for (const auto& extension : availableExtensions) {
+		requiredExtensions.erase(extension.extensionName);
+	}
+
+	return requiredExtensions.empty();
 }
 
 

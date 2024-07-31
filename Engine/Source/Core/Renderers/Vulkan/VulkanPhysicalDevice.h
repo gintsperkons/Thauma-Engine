@@ -16,6 +16,7 @@ namespace ThaumaEngine {
 		void PickPhysicalDevice();
 		std::multimap<int, VkPhysicalDevice> RateDeviceSutability(std::vector<VkPhysicalDevice> devices);
 		QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
+		bool CheckDeviceExtensionSupport(VkPhysicalDevice device);
 		public:
 			VulkanPhysicalDevice(VulkanInstance* instance, VulkanSurface* surface);
 			~VulkanPhysicalDevice();
