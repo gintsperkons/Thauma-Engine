@@ -5,6 +5,7 @@ my attempt at making a game engine
 ## Getting Started
 ### Prerequisits
 * Visual studio community 2022 or other premake supported IDEs but vs2022 only one tested
+* VulkanSDK from [Lunarg](https://vulkan.lunarg.com).
 ### Installation
 * Clone Github project
 * open terminal on project folder

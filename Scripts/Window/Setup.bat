@@ -8,7 +8,6 @@ set getpipLink=https://bootstrap.pypa.io/get-pip.py
 
 pushd %~dp0..\..\
 
-echo Setting Up Python
 :: Call Python to execute a simple command
 for /f "delims=" %%i in ('call "!binaryDir!\Python\python.exe" -c "print(1+1)"') do set output=%%i
 
