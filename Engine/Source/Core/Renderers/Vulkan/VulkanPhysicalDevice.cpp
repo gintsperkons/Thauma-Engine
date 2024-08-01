@@ -55,12 +55,16 @@ std::multimap<int, VkPhysicalDevice> ThaumaEngine::VulkanPhysicalDevice::RateDev
 
 		// Application can't function without geometry shaders
 		if (!deviceFeatures.geometryShader) {
-			score = 0;
+			score = -1;
 		}
 
 		if (!indices.isComplete())
 		{
-			score = 0;
+			score = -1;
+		}
+
+		if (!extensionsSupported) {
+			score = -1;
 		}
 
 		LOG_INFO("Possible Device Name: %s\n", deviceProperties.deviceName);
@@ -107,6 +111,12 @@ ThaumaEngine::QueueFamilyIndices ThaumaEngine::VulkanPhysicalDevice::FindQueueFa
 	return indices;
 }
 
+ThaumaEngine::SwapChainSupportDetails ThaumaEngine::VulkanPhysicalDevice::QuerySwapChainSupport(VkPhysicalDevice device)
+{
+	SwapChainSupportDetails details;	
+    return details;
+}
+
 bool ThaumaEngine::VulkanPhysicalDevice::CheckDeviceExtensionSupport(VkPhysicalDevice device)
 {
 	uint32_t extensionCount;
@@ -123,6 +133,7 @@ bool ThaumaEngine::VulkanPhysicalDevice::CheckDeviceExtensionSupport(VkPhysicalD
 
 	return requiredExtensions.empty();
 }
+
 
 
 
