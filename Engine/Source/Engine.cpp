@@ -17,14 +17,13 @@ void operator delete(void *ptr, size_t size)
 }
 
 
-ThaumaEngine::Engine* ThaumaEngine::Engine::instance = nullptr;
 ThaumaEngine::Engine* ThaumaEngine::Engine::GetInstance()
 {
-	if (instance == nullptr)
+	if (gEngine == nullptr)
 	{
-		instance = new Engine();
+		gEngine = new Engine();
 	}
-	return instance;
+	return gEngine;
 }
 
 int ThaumaEngine::Engine::Init()
@@ -53,7 +52,7 @@ int ThaumaEngine::Engine::Run()
 int ThaumaEngine::Engine::Terminate()
 {
 	delete m_window;
-	delete instance;
+	delete gEngine;
 	ThaumaEngine::MemoryManager::LogAllocations();
 	return 0;
 }

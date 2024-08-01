@@ -33,8 +33,9 @@ project "ThaumaEngineLib"
 
 prebuildcommands
 {
-        "%{prj.location}\\Shaders\\CompileShaders.bat"
+    "cmd /c \"%{prj.location}\\Shaders\\CompileShaders.bat\""
 }
+    
 
     postbuildcommands
     {   

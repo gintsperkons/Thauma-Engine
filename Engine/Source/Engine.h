@@ -9,7 +9,6 @@ namespace ThaumaEngine{
 		Window* m_window;
 		Renderer* m_renderer;
 	public:
-		static Engine* instance;
 		TAPI static Engine* GetInstance();
 		TAPI int Init();
 		TAPI int Init(Window * starterWindow);
@@ -20,4 +19,6 @@ namespace ThaumaEngine{
 
 	private:
 	};
+	
+	inline Engine* gEngine = nullptr;
 }
