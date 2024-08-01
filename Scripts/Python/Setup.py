@@ -10,11 +10,10 @@ def GetDependencies():
     return
 
 def SetupPremake(enviroment):
-    if os.name == "nt":
-        if not os.path.exists(Defines.BinaryPath+"/Premake/premake5.exe"):
-            Utils.DownloadFile(Defines.PremakeURL[os.name],Defines.TempPath+"/premake.zip")
-            Utils.ExtractZip(Defines.TempPath+"/premake.zip",Defines.BinaryPath+"/Premake")
-        Utils.ReloadPremake(enviroment)
+    if not os.path.exists(Defines.BinaryPath+"/Premake/premake5"+Defines.premakeExtensions[os.name]):
+        Utils.DownloadFile(Defines.PremakeURL[os.name],Defines.TempPath+"/premake"+Defines.premakeArchiveExtensions[os.name])
+        Utils.Extract(Defines.TempPath+"/premake"+Defines.premakeArchiveExtensions[os.name],Defines.BinaryPath+"/Premake")
+    Utils.ReloadPremake(enviroment)
 
 def CheckVulkanSDK():   
     if os.environ.get("VULKAN_SDK") == None:
@@ -29,7 +28,6 @@ if __name__ == "__main__":
     GetDependencies()
 
     CheckVulkanSDK()
-
     #premake
     if args[1] == '':
         print("Please provide the enviroment for premake")

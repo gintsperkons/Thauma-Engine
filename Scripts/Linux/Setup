@@ -1,0 +1,34 @@
+#!/bin/bash
+
+set -euo pipefail
+
+# Set variables
+binaryDir="Vendor/Binary"
+pythonVersion="3.12.4"
+pythonVersionSmall="312"
+archiveLink="https://www.python.org/ftp/python/$pythonVersion/python-$pythonVersion-embed-amd64.zip"
+getpipLink="https://bootstrap.pypa.io/get-pip.py"
+
+# Change to the script's grandparent directory
+cd "$(dirname "$0")/../../"
+
+# Call Python to execute a simple command
+output=$("$binaryDir/Python/python3" -c "print(1+1)" || echo "error")
+
+# Check the output
+if [ "$output" == "2" ]; then
+    echo "Python is working correctly."
+else
+    echo "Python is not working correctly."
+
+    sudo apt install python3 python3-pip
+fi
+
+python3 "Scripts/Python/Setup.py" "${1:-}" "${2:-}" "${3:-}"
+
+if [ -d "$binaryDir/Temp" ]; then
+    echo "Removing Temp"
+    rm -rf "$binaryDir/Temp"
+fi
+
+echo "Done"

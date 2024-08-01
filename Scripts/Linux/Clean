@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# Enable error handling and undefined variable detection
+set -euo pipefail
+
+# Set the directory variable
+directory="Vendor/Binary/"
+
+# Change to the script's grandparent directory
+cd "$(dirname "$0")/../../"
+
+echo "Cleaning Up Files"
+
+# Check if the directory exists
+if [ -d "$directory" ]; then
+    echo "Cleaning Up Generated Files"
+    echo "$(pwd)/$directory/Python/python"
+    "$(pwd)/$directory/Python/python" "$(pwd)/Scripts/Python/Clean.py"
+fi
+
+# Check if the first argument is "all"
+if [ "${1:-}" == "all" ]; then
+    if [ -d "$directory" ]; then
+        echo "Cleaning $directory"
+        rm -rf "$directory"
+    fi
+fi
+
+echo "Done"

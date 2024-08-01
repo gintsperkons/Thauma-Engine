@@ -31,11 +31,11 @@ project "ThaumaEngineLib"
         "MultiProcessorCompile"
     }
 
-prebuildcommands
-{
-    "cmd /c \"%{prj.location}\\Shaders\\CompileShaders.bat\""
-}
-    
+    prebuildcommands {
+        -- Check for the platform
+        os.host() == "windows" and 'cmd /c "%{prj.location}\\Shaders\\CompileShaders.bat"' or
+        os.host() == "linux" and 'bash "%{prj.location}/Shaders/CompileShaders.sh"'
+    }
 
     postbuildcommands
     {   

@@ -11,4 +11,7 @@ LibraryDir["VulkanSDK"] = "%{VULKAN_SDK}/Lib"
 
 Library = {} 
 
-Library["Vulkan"] = "%{LibraryDir.VulkanSDK}/vulkan-1"
+filter "system:windows"
+    Library["Vulkan"] = "%{LibraryDir.VulkanSDK}/vulkan-1"
+filter "system:linux"
+    Library["Vulkan"] = "%{LibraryDir.VulkanSDK}/vulkan"

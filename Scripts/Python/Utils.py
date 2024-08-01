@@ -56,9 +56,26 @@ def ExtractZip(zipPath, extractPath):
         zip_ref.extractall(extractPath)
 def ReloadPremake(enviroment = "vs2022"):
     import os
-    if os.name == "nt":
-        print(os.getcwd()+"\\"+Defines.BinaryPath+"Premake/premake5.exe "+enviroment)
-        os.system(os.getcwd()+"\\"+Defines.BinaryPath+"Premake/premake5.exe "+enviroment)
+    print(os.getcwd()+"/"+Defines.BinaryPath+"Premake/premake5"+Defines.premakeExtensions[os.name]+" "+enviroment)
+    os.system(os.getcwd()+"/"+Defines.BinaryPath+"Premake/premake5"+Defines.premakeExtensions[os.name]+" "+enviroment)
+
+def ExtractTar(tarPath, extractPath):
+    import tarfile
+    import os
+    checkFolder(extractPath)
+    with tarfile.open(tarPath, 'r') as tar_ref:
+        tar_ref.extractall(extractPath)
+
+def Extract(archivePath, extractPath):
+    import os
+    if archivePath.endswith(".zip"):
+        ExtractZip(archivePath, extractPath)
+    elif archivePath.endswith(".tar.gz"):
+        ExtractTar(archivePath, extractPath)
+    else:
+        print("Archive format not supported")
+        return  
+
 def LaunchVS():
     import os
     for root, dirs, files in os.walk(Defines.projectPath):
