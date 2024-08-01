@@ -16,3 +16,6 @@ Vendor/Binary/*
 
 #Python
 __pycache__/
+
+#make
+Makefile
