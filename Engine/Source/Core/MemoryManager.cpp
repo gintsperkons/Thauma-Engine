@@ -39,13 +39,13 @@ void ThaumaEngine::MemoryManager::LogAllocations()
 void *ThaumaEngine::MemoryManager::Allocate(size_t size, MemoryManager::MemoryType memoryType)
 {
 	MemoryManager::AddAllocation(size, memoryType);
-	LOG_DEBUG("Allocated %d bytes\n", size);
+	//LOG_DEBUG("Allocated %d bytes\n", size);
 	return malloc(size);
 }
 
 void ThaumaEngine::MemoryManager::Free(void *ptr, size_t size, MemoryManager::MemoryType memoryType)
 {
 	MemoryManager::RemoveAllocation(size, memoryType);
-	LOG_DEBUG("Deallocated %d bytes\n", size);
+	//LOG_DEBUG("Deallocated %d bytes\n", size);
 	free(ptr);
 }

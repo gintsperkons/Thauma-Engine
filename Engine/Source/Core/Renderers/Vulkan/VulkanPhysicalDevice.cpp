@@ -56,16 +56,31 @@ std::multimap<int, VkPhysicalDevice> ThaumaEngine::VulkanPhysicalDevice::RateDev
 		// Application can't function without geometry shaders
 		if (!deviceFeatures.geometryShader) {
 			score = -1;
+			LOG_WARN("Geometry Shader is not supported for this device\n");
 		}
 
 		if (!indices.isComplete())
 		{
 			score = -1;
+			LOG_WARN("Queue Families are not complete for this device\n");
 		}
 
 		if (!extensionsSupported) {
 			score = -1;
+			LOG_WARN("Extensions are not supported for this device\n");
 		}
+
+		bool swapChainAdequate = false;
+		if (extensionsSupported) {
+			SwapChainSupportDetails swapChainSupport = QuerySwapChainSupport(device);
+			swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
+		}
+		if (!swapChainAdequate)
+		{
+			score = -1;
+			LOG_WARN("Swap Chain is not adequate for this device\n");
+		}
+		
 
 		LOG_INFO("Possible Device Name: %s\n", deviceProperties.deviceName);
 		candidates.insert(std::pair<int,VkPhysicalDevice>(score,device));
@@ -114,6 +129,24 @@ ThaumaEngine::QueueFamilyIndices ThaumaEngine::VulkanPhysicalDevice::FindQueueFa
 ThaumaEngine::SwapChainSupportDetails ThaumaEngine::VulkanPhysicalDevice::QuerySwapChainSupport(VkPhysicalDevice device)
 {
 	SwapChainSupportDetails details;	
+	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, m_surface->GetSurface(), &details.capabilities);
+
+	uint32_t formatCount;
+	vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface->GetSurface(), &formatCount, nullptr);
+
+	if (formatCount != 0) {
+		details.formats.resize(formatCount);
+		vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface->GetSurface(), &formatCount, details.formats.data());
+	}
+
+	uint32_t presentModeCount;
+	vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface->GetSurface(), &presentModeCount, nullptr);
+
+	if (presentModeCount != 0) {
+		details.presentModes.resize(presentModeCount);
+		vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface->GetSurface(), &presentModeCount, details.presentModes.data());
+	}
+
     return details;
 }
 
