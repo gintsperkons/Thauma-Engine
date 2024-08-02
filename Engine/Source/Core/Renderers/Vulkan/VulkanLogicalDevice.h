@@ -17,5 +17,7 @@ namespace ThaumaEngine {
 	public:
 		VulkanLogicalDevice(VulkanPhysicalDevice* pDevice);
 		~VulkanLogicalDevice();
+
+		VkDevice GetDevice() const { return m_device; }
 	};
 }

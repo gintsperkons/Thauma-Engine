@@ -17,11 +17,20 @@ project "ThaumaEngineLib"
         IncludeDir["VulkanSDK"]
     }
 
-    links 
-    {
-        "GLFW",
-        Library["Vulkan"]
-    }
+    filter "system:windows"
+        links 
+        {
+            "GLFW",
+            Library["VulkanWindow"]
+        }
+    
+    filter "system:linux"
+        links 
+        {
+            "GLFW",
+            Library["VulkanLinux"]
+        }
+    filter {}
 
     targetdir ("%{wks.location}\\Binaries\\" .. OutputDir .. "\\%{prj.name}")
     objdir ("%{wks.location}\\Binaries\\Intermediates\\" .. OutputDir .. "\\%{prj.name}")

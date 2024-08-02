@@ -10,6 +10,7 @@ namespace ThaumaEngine
 	class VulkanPhysicalDevice;
 	class VulkanLogicalDevice;
 	class VulkanSurface;
+	class VulkanSwapChain;
 	class VulkanRenderer: public BaseRenderer
 	{
 		Window* m_window;
@@ -17,6 +18,7 @@ namespace ThaumaEngine
 		VulkanPhysicalDevice* m_physicalDevice;
 		VulkanLogicalDevice* m_logicalDevice;
 		VulkanSurface* m_surface;
+		VulkanSwapChain* m_swapChain;
 	public:
 		VulkanRenderer();
 		~VulkanRenderer();

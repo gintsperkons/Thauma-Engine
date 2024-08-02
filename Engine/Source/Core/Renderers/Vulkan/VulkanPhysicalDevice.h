@@ -22,6 +22,7 @@ namespace ThaumaEngine {
 			VulkanPhysicalDevice(VulkanInstance* instance, VulkanSurface* surface);
 			~VulkanPhysicalDevice();
 			QueueFamilyIndices GetQueueFamilyIndices();
+			SwapChainSupportDetails QuerySwapChainSupport();
 			VkPhysicalDevice GetDevice() const { return m_physicalDevice; }
 	};
 }

@@ -52,6 +52,7 @@ int ThaumaEngine::Engine::Run()
 int ThaumaEngine::Engine::Terminate()
 {
 	delete m_window;
+	delete m_renderer;
 	delete gEngine;
 	ThaumaEngine::MemoryManager::LogAllocations();
 	return 0;

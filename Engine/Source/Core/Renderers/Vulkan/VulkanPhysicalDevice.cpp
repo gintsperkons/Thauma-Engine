@@ -186,3 +186,8 @@ ThaumaEngine::QueueFamilyIndices ThaumaEngine::VulkanPhysicalDevice::GetQueueFam
 {
 	return FindQueueFamilies(m_physicalDevice);
 }
+
+ThaumaEngine::SwapChainSupportDetails ThaumaEngine::VulkanPhysicalDevice::QuerySwapChainSupport()
+{
+	return QuerySwapChainSupport(m_physicalDevice);
+}
