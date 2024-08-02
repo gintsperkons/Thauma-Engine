@@ -1,5 +1,6 @@
 #pragma once
 #include "Defines.h"
+#include "VulkanStructures.h"
 #include "vulkan/vulkan.h"
 namespace ThaumaEngine {
 	struct QueueFamilyIndices;

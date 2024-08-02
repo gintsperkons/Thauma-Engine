@@ -5,9 +5,12 @@
 #include "VulkanLogicalDevice.h"
 #include "VulkanSurface.h"
 #include "VulkanSwapChain.h"
+#include "VulkanGraphicsPipeline.h"
 #include <Core/Window/Window.h>
 
-ThaumaEngine::VulkanRenderer::VulkanRenderer(): m_instance(nullptr), m_physicalDevice(nullptr)
+ThaumaEngine::VulkanRenderer::VulkanRenderer():
+	m_instance(nullptr), m_physicalDevice(nullptr), m_logicalDevice(nullptr), 
+	m_surface(nullptr), m_swapChain(nullptr), m_graphicsPipeline(nullptr), m_window(nullptr)
 {}
 
 ThaumaEngine::VulkanRenderer::~VulkanRenderer()
@@ -23,6 +26,7 @@ void ThaumaEngine::VulkanRenderer::Init(Window* window)
 	m_physicalDevice = new VulkanPhysicalDevice(m_instance,m_surface);
 	m_logicalDevice = new VulkanLogicalDevice(m_physicalDevice);
 	m_swapChain = new VulkanSwapChain(m_window,m_physicalDevice,m_logicalDevice,m_surface);
+	m_graphicsPipeline = new VulkanGraphicsPipeline(m_logicalDevice);
 }
 
 void ThaumaEngine::VulkanRenderer::Render()

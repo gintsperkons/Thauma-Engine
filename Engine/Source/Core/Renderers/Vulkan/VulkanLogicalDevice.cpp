@@ -1,4 +1,4 @@
-#include "VulkanStructures.h"
+
 #include "VulkanLogicalDevice.h"
 #include "VulkanPhysicalDevice.h"
 #include <set>
