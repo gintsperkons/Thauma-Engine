@@ -14,6 +14,7 @@ namespace ThaumaEngine
 		VulkanSurface* m_surface;
 		VkSwapchainKHR m_swapChain;
 		std::vector<VkImage> m_swapChainImages;
+		std::vector<VkImageView> m_swapChainImageViews;
 		VkFormat m_swapChainImageFormat;
 		VkExtent2D m_swapChainExtent;
 
@@ -23,6 +24,7 @@ namespace ThaumaEngine
 		VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 
 		void CreateSwapChain();
+		void CreateImageViews();
 	public:
 		
 		VulkanSwapChain(Window *window, VulkanPhysicalDevice *pDevice, VulkanLogicalDevice *lDevice, VulkanSurface *surface);
